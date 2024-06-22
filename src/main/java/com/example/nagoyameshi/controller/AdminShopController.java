@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.nagoyameshi.entity.Shop;
+import com.example.nagoyameshi.form.ShopRegisterForm;
 import com.example.nagoyameshi.repository.ShopRepository;
 
 @Controller
@@ -45,5 +46,10 @@ public class AdminShopController {
         model.addAttribute("shop", shop);
         
         return "admin/shops/show";
+    }    
+    @GetMapping("/register")
+    public String register(Model model) {
+        model.addAttribute("shopRegisterForm", new ShopRegisterForm());
+        return "admin/shops/register";
     }    
 }
