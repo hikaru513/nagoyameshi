@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS shops (
      name VARCHAR(50) NOT NULL,  
      image_name VARCHAR(255),
      description VARCHAR(255) NOT NULL,
-     opening_time INT NOT NULL,
-     closing_time INT NOT NULL,
+     opening_time VARCHAR(50) NOT NULL,
+     closing_time VARCHAR(50) NOT NULL,
      price INT NOT NULL,
      postal_code VARCHAR(50) NOT NULL,
      address VARCHAR(255) NOT NULL,
@@ -13,3 +13,9 @@ CREATE TABLE IF NOT EXISTS shops (
      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
  );
+
+ CREATE TABLE IF NOT EXISTS roles (
+     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+     name VARCHAR(50) NOT NULL
+ );
+ 
