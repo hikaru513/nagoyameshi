@@ -1,6 +1,7 @@
 package com.example.nagoyameshi.entity;
 
 import java.sql.Timestamp;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,44 +15,44 @@ import lombok.Data;
 @Table(name = "shops")
 @Data
 public class Shop {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Integer id;
 
-    @Column(name = "name")
-    private String name;
+	@Column(name = "name")
+	private String name;
 
-    @Column(name = "image_name")
-    private String imageName;
+	@Column(name = "image_name")
+	private String imageName;
 
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "opening_time")
-    private Integer opening_time;
-    
-    @Column(name = "closing_time")
-    private Integer closing_time;
+	@Column(name = "description")
+	private String description;
 
-    @Column(name = "price")
-    private Integer price;
+	@Column(name = "opening_time")
+	private LocalTime opening_time;
 
-    @Column(name = "postal_code")
-    private String postalCode;
+	@Column(name = "closing_time")
+	private LocalTime closing_time;
 
-    @Column(name = "address")
-    private String address;
+	@Column(name = "price")
+	private Integer price;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-    
-    @Column(name = "regular_off")
-    private String regular_off;
+	@Column(name = "postal_code")
+	private String postalCode;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
-    private Timestamp createdAt;
+	@Column(name = "address")
+	private String address;
 
-    @Column(name = "updated_at", insertable = false, updatable = false)
-    private Timestamp updatedAt;
+	@Column(name = "phone_number")
+	private String phoneNumber;
+
+	@Column(name = "regular_off")
+	private String regular_off;
+
+	@Column(name = "created_at", insertable = false, updatable = false)
+	private Timestamp createdAt;
+
+	@Column(name = "updated_at", insertable = false, updatable = false)
+	private Timestamp updatedAt;
 }
