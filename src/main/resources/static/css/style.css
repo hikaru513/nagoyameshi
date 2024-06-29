@@ -83,6 +83,9 @@ html {
  .nagoyameshi-btn-danger:hover {
    opacity: 0.8;   
  }
+ .nagoyameshi-dropdown-item:active {
+   background-color: #5196a6;
+ }
  .alert{
 	 background-color: #a78e7d ;
 	 border-color: #a78e7d;
