@@ -6,18 +6,23 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class ShopRegisterForm {
+@AllArgsConstructor
+public class ShopEditForm {
+	@NotNull
+    private Integer id;
+	
 	@NotBlank(message = "店舗名を入力してください。")
     private String name;
         
     private MultipartFile imageFile;
     
     @NotBlank(message = "説明を入力してください。")
-    private String description; 
-    
+    private String description;     
+        
     @NotNull(message = "開店時間（時）を入力してください。")
 	@Range(min = 0, max = 23, message = "開店時間（時）は0から23の間に設定してください。")
 	private Integer openingTimeHour;
@@ -39,8 +44,7 @@ public class ShopRegisterForm {
     
     @NotNull(message = "料金を入力してください。")
     @Min(value = 1, message = "料金は1円以上に設定してください。")
-    private Integer price;  
-        
+    private Integer price;
     
     @NotBlank(message = "郵便番号を入力してください。")
     private String postalCode;
@@ -51,3 +55,5 @@ public class ShopRegisterForm {
     @NotBlank(message = "電話番号を入力してください。")
     private String phoneNumber;
 }
+
+

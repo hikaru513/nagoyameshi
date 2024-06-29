@@ -11,7 +11,7 @@ html {
  }
  
  a {
-   color: #5196a6;
+   color: #6D4427;
    text-decoration: none !important;
  }
  
@@ -43,7 +43,7 @@ html {
  }
  
  .nagoyameshi-btn {
-   background-color: #5196a6 !important;   
+   background-color: #6D4427 !important;   
    transition: 0.1s;
  }
  
@@ -52,7 +52,7 @@ html {
  }
  
  .nagoyameshi-page-link {
-   color: #5196a6;
+   color: #6D4427;
  }
  
  .nagoyameshi-page-link:hover {
@@ -60,14 +60,34 @@ html {
  }
  
  .nagoyameshi-active {
-   background-color: #5196a6 !important;
-   border-color: #5196a6 !important;
+   background-color: #6D4427 !important;
+   border-color: #6D4427 !important;
  }
  .nagoyameshi-pre-wrap {
    /* 改行文字で行を折り返す */
    white-space: pre-wrap;
  }
-
+ .nagoyameshi-link-danger {
+     color: #f2594b;
+ }
+ 
+ .nagoyameshi-link-danger:hover {
+     color: #a63c3c;
+ }
+ 
+ .nagoyameshi-btn-danger {
+     background-color: #f2594b !important;
+     transition: 0.1s;
+ }
+ 
+ .nagoyameshi-btn-danger:hover {
+   opacity: 0.8;   
+ }
+ .alert{
+	 background-color: #a78e7d ;
+	 border-color: #a78e7d;
+	 color: #000000;
+ }
  @media screen and (min-width: 1400px) {
    .nagoyameshi-container {
      max-width: 1200px;

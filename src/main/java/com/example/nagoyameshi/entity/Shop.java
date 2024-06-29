@@ -1,7 +1,6 @@
 package com.example.nagoyameshi.entity;
 
 import java.sql.Timestamp;
-import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,11 +28,17 @@ public class Shop {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "opening_time")
-	private LocalTime opening_time;
+	@Column(name = "opening_time_hour")
+	private Integer openingTimeHour;
+	
+	@Column(name = "opening_time_minute")
+	private Integer openingTimeMinute;
 
-	@Column(name = "closing_time")
-	private LocalTime closing_time;
+	@Column(name = "closing_time_hour")
+	private Integer closingTimeHour;
+	
+	@Column(name = "closing_time_minute")
+	private Integer closingTimeMinute;
 
 	@Column(name = "price")
 	private Integer price;
@@ -48,7 +53,7 @@ public class Shop {
 	private String phoneNumber;
 
 	@Column(name = "regular_off")
-	private String regular_off;
+	private String regularOff;
 
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;
