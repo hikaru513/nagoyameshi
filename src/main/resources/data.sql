@@ -59,3 +59,17 @@ INSERT IGNORE INTO shops (id, name, image_name, description, opening_time_hour, 
 INSERT IGNORE INTO roles (id, name) VALUES (1, 'ROLE_FREE_MEMBER');
 INSERT IGNORE INTO roles (id, name) VALUES (2, 'ROLE_PAID_MEMBER');
 INSERT IGNORE INTO roles (id, name) VALUES (3, 'ROLE_ADMIN');
+-- usersテーブル
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (1, '侍 太郎', 'サムライ タロウ', 'taro.samurai@example.com', 'password', 1, true);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (2, '侍 花子', 'サムライ ハナコ', 'hanako.samurai@example.com', 'password', 1, true);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (3, '侍 義勝', 'サムライ ヨシカツ', 'yoshikatsu.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (4, '侍 幸美', 'サムライ サチミ', 'sachimi.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (5, '侍 雅', 'サムライ ミヤビ', 'miyabi.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (6, '侍 正保', 'サムライ マサヤス', 'masayasu.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (7, '侍 真由美', 'サムライ マユミ', 'mayumi.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (8, '侍 安民', 'サムライ ヤスタミ', 'yasutami.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (9, '侍 章緒', 'サムライ アキオ', 'akio.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (10, '侍 祐子', 'サムライ ユウコ', 'yuko.samurai@example.com', 'password', 1, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (11, '侍 秋美', 'サムライ アキミ', 'akimi.samurai@example.com', 'password', 2, false);
+INSERT IGNORE INTO users (id, name, furigana, email, password, role_id, enabled) VALUES (12, '侍 信平', 'サムライ シンペイ', 'shinpei.samurai@example.com', 'password', 3, false);
+
