@@ -26,6 +26,15 @@ public class User {
         
     @Column(name = "furigana")
     private String furigana;    
+        
+    @Column(name = "postal_code")
+    private String postalCode;
+        
+    @Column(name = "address")
+    private String address;
+        
+    @Column(name = "phone_number")
+    private String phoneNumber;
     
     @Column(name = "email")
     private String email;
@@ -44,5 +53,5 @@ public class User {
     private Timestamp createdAt;
     
     @Column(name = "updated_at", insertable = false, updatable = false)
-    private Timestamp updatedAt;  
+    private Timestamp updatedAt;       
 }

@@ -36,12 +36,10 @@ public class ShopService {
             shop.setImageName(hashedImageName);
         }
         
-        shop.setName(shopRegisterForm.getName());                
+        shop.setName(shopRegisterForm.getName());
         shop.setDescription(shopRegisterForm.getDescription());
-        shop.setOpeningTimeHour(shopRegisterForm.getOpeningTimeHour());
-        shop.setOpeningTimeMinute(shopRegisterForm.getOpeningTimeMinute());
-        shop.setClosingTimeHour(shopRegisterForm.getClosingTimeHour());
-        shop.setClosingTimeMinute(shopRegisterForm.getClosingTimeMinute());
+        shop.setOpeningTime(shopRegisterForm.getOpeningTime());
+        shop.setClosingTime(shopRegisterForm.getClosingTime());
         shop.setRegularOff(shopRegisterForm.getRegularOff());
         shop.setPrice(shopRegisterForm.getPrice());
         shop.setPostalCode(shopRegisterForm.getPostalCode());
@@ -66,10 +64,8 @@ public class ShopService {
         
         shop.setName(shopEditForm.getName());                
         shop.setDescription(shopEditForm.getDescription());
-        shop.setOpeningTimeHour(shopEditForm.getOpeningTimeHour());
-        shop.setOpeningTimeMinute(shopEditForm.getOpeningTimeMinute());
-        shop.setClosingTimeHour(shopEditForm.getClosingTimeHour());
-        shop.setClosingTimeMinute(shopEditForm.getClosingTimeMinute());
+        shop.setOpeningTime(shopEditForm.getOpeningTime());
+        shop.setClosingTime(shopEditForm.getClosingTime());
         shop.setRegularOff(shopEditForm.getRegularOff());
         shop.setPrice(shopEditForm.getPrice());
         shop.setPostalCode(shopEditForm.getPostalCode());

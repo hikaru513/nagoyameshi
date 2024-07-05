@@ -51,7 +51,11 @@
                                      <span sec:authentication="principal.user.name"></span>
                                  </a>
          
-                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownFreeMember">                                                                  
+                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownFreeMember">
+									 <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/user}">会員情報</a>  
+                                     
+                                     <div class="dropdown-divider"></div>
+                                                                                                                                                                     
                                      <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                          ログアウト
                                      </a>
@@ -65,7 +69,11 @@
                                      <span sec:authentication="principal.user.name"></span>
                                  </a>
          
-                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPaidMember">                                                                  
+                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPaidMember"> 
+									 <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/user}">会員情報</a>  
+                                     
+                                     <div class="dropdown-divider"></div>
+                                                                                                                                                                    
                                      <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                          ログアウト
                                      </a>
@@ -79,7 +87,8 @@
                                      管理者メニュー
                                  </a>
          
-                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">                                                                                            
+                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">   
+									 <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/admin/users}">会員一覧</a>                                                                                         
                                      <a class="dropdown-item nagoyameshi-dropdown-item" th:href="@{/admin/shops}">店舗一覧</a>                                                                                                     
                                                                
                                      <div class="dropdown-divider"></div>
@@ -101,7 +110,7 @@
          <div th:fragment="footer" th:remove="tag">
              <footer>
                  <div class="d-flex justify-content-center align-items-center h-100">
-                     <p class="text-center text-muted small mb-0">&copy; MAGOYAMESHI All rights reserved.</p>      
+                     <p class="text-center text-muted small mb-0">&copy; NAGOYAMESHI All rights reserved.</p>      
                  </div>                 
              </footer>
          </div>

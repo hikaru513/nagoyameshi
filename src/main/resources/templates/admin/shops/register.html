@@ -59,41 +59,29 @@
                                      </div>
                                  </div>
                                  
-                                 <div class="form-group row mb-3">
-    								<div class="col-md-4">
-        								<label for="openingTime" class="col-form-label text-md-left fw-bold">開店時間（時/分）</label>
-    								</div>
-    								<div class="col-md-8">
-        								<div class="row">
-            							<div class="col-md-6">
-										<div th:if="${#fields.hasErrors('openingTimeHour')}" class="text-danger small mb-2" th:errors="*{openingTimeHour}"></div>
-										<div th:if="${#fields.hasErrors('openingTimeMinute')}" class="text-danger small mb-2" th:errors="*{openingTimeMinute}"></div>
-                						<input type="number" min="0" max="23" class="form-control" th:field="*{openingTimeHour}" id="openingTimeHour" name="openingTimeHour" placeholder="時 (0-23)">
-            						</div>
-            					<div class="col-md-6">
-               							 <input type="number" min="0" max="59" class="form-control" th:field="*{openingTimeMinute}" id="openingTimeMinute" name="openingTimeMinute" placeholder="分 (0-59)">
-            					</div>
-        								</div>
-    								</div>
-								</div>
+                          <div class="form-group row mb-3">
+                                  <div class="col-md-4">
+                                      <label for="openingTime" class="col-form-label text-md-left fw-bold">開店時間</label>
+                                  </div>
+                                  <div class="col-md-8">
+                                      <div th:if="${#fields.hasErrors('openingTime')}" class="text-danger small mb-2" th:errors="*{openingTime}"></div>
+                                      <select class="form-control" th:field="*{openingTime}">
+                                          <option th:each="time : ${timeOptions}" th:value="${time}" th:text="${time}"></option>
+                                      </select>
+                                  </div>
+                              </div>
 
-								<div class="form-group row mb-3">
-    								<div class="col-md-4">
-        								<label for="closingTime" class="col-form-label text-md-left fw-bold">閉店時間（時/分）</label>
-    								</div>
-    								<div class="col-md-8">
-        								<div class="row">
-            							<div class="col-md-6">
-										<div th:if="${#fields.hasErrors('closingTimeHour')}" class="text-danger small mb-2" th:errors="*{closingTimeHour}"></div>
-										<div th:if="${#fields.hasErrors('closingTimeMinute')}" class="text-danger small mb-2" th:errors="*{closingTimeMinute}"></div>
-                						<input type="number" min="0" max="23" class="form-control" th:field="*{closingTimeHour}" id="closingTimeHour" name="closingTimeHour" placeholder="時 (0-23)">
-            							</div>
-            						<div class="col-md-6">
-                						<input type="number" min="0" max="59" class="form-control" th:field="*{closingTimeMinute}" id="closingTimeMinute" name="closingTimeMinute" placeholder="分 (0-59)">
-            						</div>
-        								</div>
-    								</div>
-								</div>
+                              <div class="form-group row mb-3">
+                                  <div class="col-md-4">
+                                      <label for="closingTime" class="col-form-label text-md-left fw-bold">閉店時間</label>
+                                  </div>
+                                  <div class="col-md-8">
+                                      <div th:if="${#fields.hasErrors('closingTime')}" class="text-danger small mb-2" th:errors="*{closingTime}"></div>
+                                      <select class="form-control" th:field="*{closingTime}">
+                                          <option th:each="time : ${timeOptions}" th:value="${time}" th:text="${time}"></option>
+                                      </select>
+                                  </div>
+                              </div>
                                  
                                  <div class="form-group row mb-3">
                                      <div class="col-md-4">
@@ -105,7 +93,7 @@
                                      </div>
                                  </div>
                          
-                                 <div　class="form-group row mb-3">
+                                 <div class="form-group row mb-3">
                                      <div class="col-md-4">
                                          <label for="price" class="col-form-label text-md-left fw-bold">料金（単位：円）</label>
                                      </div> 
@@ -121,7 +109,7 @@
                                      <div class="col-md-4">
                                          <label for="postalCode" class="col-form-label text-md-left fw-bold">郵便番号</label>
                                      </div>
-                                     <div class="col-md-4">
+                                     <div class="col-md-8">
                                          <div th:if="${#fields.hasErrors('postalCode')}" class="text-danger small mb-2" th:errors="*{postalCode}"></div>
                                          <input type="text" class="form-control" th:field="*{postalCode}">
                                      </div>
@@ -131,7 +119,7 @@
                                      <div class="col-md-4">
                                          <label for="address" class="col-form-label text-md-left fw-bold">住所</label>
                                      </div>
-                                     <div class="col-md-4">
+                                     <div class="col-md-8">
                                          <div th:if="${#fields.hasErrors('address')}" class="text-danger small mb-2" th:errors="*{address}"></div>
                                          <input type="text" class="form-control" th:field="*{address}">  
                                      </div>
@@ -141,7 +129,7 @@
                                      <div class="col-md-4">
                                          <label for="phoneNumber" class="col-form-label text-md-left fw-bold">電話番号</label>
                                      </div>
-                                     <div class="col-md-6">
+                                     <div class="col-md-8">
                                          <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mb-2" th:errors="*{phoneNumber}"></div>
                                          <input type="text" class="form-control" th:field="*{phoneNumber}">                                
                                      </div>

@@ -55,7 +55,16 @@
                                      <div class="col">
                                          <span th:text="${shop.getName()}"></span>
                                      </div>
-                                 </div>                    
+                                 </div>  
+                                 
+                                 <div class="row pb-2 mb-2 border-bottom">
+    								<div class="col-4">
+        								<span class="fw-bold">カテゴリ</span>
+    								</div>
+    								<div class="col">
+        								<span th:each="categoryShopRelation, stat : ${categories}" th:text="${categoryShopRelation.category.name} + (stat.hasNext() ? ', ' : '')"></span>
+    								</div>
+								</div>                  
              
                                  <div class="row pb-2 mb-2 border-bottom">
                                      <div class="col-4">
@@ -67,22 +76,24 @@
                                      </div>
                                  </div>
                                  
-                                 <div class="row pb-2 mb-2 border-bottom">
-                                <div class="col-4">
-                                    <span class="fw-bold">開店時間</span>
-                                </div>
-                                <div class="col">
-                                    <span th:text="${shop.openingTimeHour} + '時' + ${shop.openingTimeMinute} + '分'"></span>
-                                </div>
-                            </div>
+                            	<div class="row pb-2 mb-2 border-bottom">
+                                	<div class="col-4">
+                                    	<span class="fw-bold">開店時間</span>
+                                	</div>
+                                	<div class="col">
+                                    	<span th:text="${shop.openingTime != null ? #temporals.format(shop.openingTime, 'HH時mm分') : '-'}"></span>
+                                	</div>
+                            	</div>
+
                             <div class="row pb-2 mb-2 border-bottom">
                                 <div class="col-4">
                                     <span class="fw-bold">閉店時間</span>
                                 </div>
                                 <div class="col">
-                                    <span th:text="${shop.closingTimeHour} + '時' + ${shop.closingTimeMinute} + '分'"></span>
-                                 </div>
+                                    <span th:text="${shop.closingTime != null ? #temporals.format(shop.closingTime, 'HH時mm分') : '-'}"></span>
+                                </div>
                             </div>
+
                                  
                                  <div class="row pb-2 mb-2 border-bottom">
                                      <div class="col-4">
