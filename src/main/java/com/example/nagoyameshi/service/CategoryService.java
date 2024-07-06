@@ -1,7 +1,8 @@
 package com.example.nagoyameshi.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.nagoyameshi.entity.Category;
 import com.example.nagoyameshi.repository.CategoryRepository;
@@ -13,18 +14,17 @@ public class CategoryService {
 	
 	public CategoryService(CategoryRepository categoryRepository) {
 		this.categoryRepository = categoryRepository;
+		
 	}
 	
-	// カテゴリを保存または更新するメソッド
-    @Transactional
+	// カテゴリを全件取得
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    // 新規カテゴリを保存
     public Category save(Category category) {
         return categoryRepository.save(category);
     }
-  
-//  @Transactional
-  public void deleteById(Integer id) {
-      categoryRepository.deleteById(id);
-
-  }
 }
 

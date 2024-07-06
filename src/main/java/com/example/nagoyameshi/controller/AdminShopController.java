@@ -64,8 +64,9 @@ public class AdminShopController {
     
     @GetMapping("/register")
     public String register(Model model) {
+    	 
         model.addAttribute("shopRegisterForm", new ShopRegisterForm());
-
+        
         // 時間オプションを生成
         List<String> options = IntStream.rangeClosed(0, 47)
                                         .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
@@ -80,6 +81,7 @@ public class AdminShopController {
     public String create(@ModelAttribute @Validated ShopRegisterForm shopRegisterForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, 
             Model model) {        
         if (bindingResult.hasErrors()) {
+            
             // 時間オプションを再生成してモデルに追加
             List<String> options = IntStream.rangeClosed(0, 47)
                                             .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
