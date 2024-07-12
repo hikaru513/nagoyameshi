@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -45,8 +47,13 @@ public class ShopService {
         shop.setPostalCode(shopRegisterForm.getPostalCode());
         shop.setAddress(shopRegisterForm.getAddress());
         shop.setPhoneNumber(shopRegisterForm.getPhoneNumber());
+        
+     // カンマ区切りのカテゴリをリストに変換
+        List<String> setCategories = Arrays.asList(shopRegisterForm.getCategories().split(","));
+        // TODO: カテゴリを保存するロジックを追加
                     
         shopRepository.save(shop);
+       
     }  
     
     @Transactional

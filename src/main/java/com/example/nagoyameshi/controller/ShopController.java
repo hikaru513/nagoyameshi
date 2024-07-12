@@ -1,7 +1,5 @@
 package com.example.nagoyameshi.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -9,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,19 +22,12 @@ public class ShopController {
     public ShopController(ShopRepository shopRepository) {
         this.shopRepository = shopRepository;            
     }  
-    
-    @GetMapping("/")
-    public String index(Model model) {
-        List<Shop> newShops = shopRepository.findTop10ByOrderByCreatedAtDesc();
-        model.addAttribute("newShops", newShops);        
-       
-       return "index";
-   } 
 
     @GetMapping
     public String index(@RequestParam(name = "keyword", required = false) String keyword,
                         @RequestParam(name = "area", required = false) String area,
                         @RequestParam(name = "price", required = false) Integer price,
+                        @RequestParam(name = "categoryshoprelation", required = false) String categoryshoprelation,
                         @RequestParam(name = "order", required = false) String order,
                         @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
                         Model model) 
@@ -56,9 +48,9 @@ public class ShopController {
             }  
         } else if (price != null) {
         	if (order != null && order.equals("priceAsc")) {
-                shopPage = shopRepository.findByPriceLikeOrderByPriceAsc(price, pageable);
+                shopPage = shopRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
             } else {
-                shopPage = shopRepository.findByPriceLikeOrderByCreatedAtDesc(price, pageable);
+                shopPage = shopRepository.findByPriceLessThanEqualOrderByCreatedAtDesc(price, pageable);
             }
         } else {
         	if (order != null && order.equals("priceAsc")) {
@@ -72,8 +64,18 @@ public class ShopController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("area", area);
         model.addAttribute("price", price);
+        model.addAttribute("categoryshoprelation", categoryshoprelation);
         model.addAttribute("order", order);
         
         return "shops/index";
     }
+    
+    @GetMapping("/{id}")
+    public String show(@PathVariable(name = "id") Integer id, Model model) {
+        Shop shop = shopRepository.getReferenceById(id);
+        
+        model.addAttribute("shop", shop);         
+        
+        return "shops/show";
+    }  
 }

@@ -1,7 +1,6 @@
 package com.example.nagoyameshi.form;
 
 import java.time.LocalTime;
-import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +17,7 @@ public class ShopRegisterForm {
     private MultipartFile imageFile;
     
     @NotNull(message = "カテゴリを選択してください。")
-    private List<String> categories;
+    private String categories;
     
     @NotBlank(message = "説明を入力してください。")
     private String description; 

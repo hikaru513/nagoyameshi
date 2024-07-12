@@ -22,7 +22,7 @@ public class Shop {
 
 	@Column(name = "name")
 	private String name;
-
+	
 	@Column(name = "image_name")
 	private String imageName;
 

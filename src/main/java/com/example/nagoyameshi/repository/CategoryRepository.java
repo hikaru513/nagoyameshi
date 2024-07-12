@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.nagoyameshi.entity.Category;
 
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 }

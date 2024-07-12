@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.nagoyameshi.entity.CategoryShopRelation;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.form.ShopEditForm;
 import com.example.nagoyameshi.form.ShopRegisterForm;
+import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.service.ShopService;
 
@@ -31,11 +33,13 @@ import com.example.nagoyameshi.service.ShopService;
 @RequestMapping("/admin/shops")
 public class AdminShopController {
     private final ShopRepository shopRepository;   
-     private final ShopService shopService;    
+     private final ShopService shopService;
+     private final CategoryShopRelationRepository categoryShopRelationRepository;
     
-     public AdminShopController(ShopRepository shopRepository, ShopService shopService) {
-        this.shopRepository = shopRepository; 
+     public AdminShopController(ShopRepository shopRepository, ShopService shopService, CategoryShopRelationRepository categoryShopRelationRepository) {
+    	 this.shopRepository = shopRepository; 
          this.shopService = shopService;  
+         this.categoryShopRelationRepository = categoryShopRelationRepository;
     }			
     
     @GetMapping
@@ -56,7 +60,10 @@ public class AdminShopController {
     @GetMapping("/{id}")
     public String show(@PathVariable(name = "id") Integer id, Model model) {
         Shop shop = shopRepository.getReferenceById(id);
+        List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
         
+        model.addAttribute("categoryShopRelation", categoryShopRelation);
+
         model.addAttribute("shop", shop);
         
         return "admin/shops/show";
@@ -73,7 +80,8 @@ public class AdminShopController {
                                         .collect(Collectors.toList());
         
         model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
-
+        
+        
         return "admin/shops/register";
     }
     
@@ -88,9 +96,9 @@ public class AdminShopController {
                                             .collect(Collectors.toList());
 
             model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+            
             return "admin/shops/register";
         }
-        
      // 開店時間と閉店時間のバリデーション
         LocalTime openingTime = shopRegisterForm.getOpeningTime();
         LocalTime closingTime = shopRegisterForm.getClosingTime();
