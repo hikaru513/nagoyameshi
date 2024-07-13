@@ -78,7 +78,7 @@ public class ReviewController {
 	  reviewService.create(shop, user, reviewForm);
 	  redirectAttributes.addFlashAttribute("successMessage", "レビューを投稿しました。");
 	  
-	  return "redirect:/shops/{houseId}";
+	  return "redirect:/shops/{shopId}";
   }
   
   @GetMapping("/{id}/edit")
