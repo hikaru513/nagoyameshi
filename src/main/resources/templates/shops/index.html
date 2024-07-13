@@ -231,7 +231,12 @@
                                                      <p class="card-text mb-2">
                                                          <small class="text-muted" th:text="${'〒' + shop.getPostalCode()}"></small>
                                                          <small class="text-muted" th:text="${shop.getAddress()}"></small>                                                      
-                                                     </p>   
+                                                     </p>  
+                                                     
+                                                     <p class="card-text mb-2">
+                                                         <span th:each="categoryShop, stat : ${categoryShopRelation}" th:if="${stat.first}" th:text="${categoryShop.getCategory().getName()}"></span>
+														 <span th:each="categoryShop, stat : ${categoryShopRelation}" th:unless="${stat.first}" th:text="${'、' + categoryShop.getCategory().getName()}"></span>
+                                                     </p> 
                                                                                                                                                                                                                                     
                                                      <p class="card-text">
                                                          <span th:text="${#numbers.formatInteger(shop.getPrice(), 1, 'COMMA') + '円 '}"></span>
