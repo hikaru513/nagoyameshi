@@ -32,7 +32,7 @@ import com.example.nagoyameshi.service.ShopService;
 @Controller
 @RequestMapping("/admin/shops")
 public class AdminShopController {
-    private final ShopRepository shopRepository;   
+     private final ShopRepository shopRepository;   
      private final ShopService shopService;
      private final CategoryShopRelationRepository categoryShopRelationRepository;
     
@@ -40,7 +40,8 @@ public class AdminShopController {
     	 this.shopRepository = shopRepository; 
          this.shopService = shopService;  
          this.categoryShopRelationRepository = categoryShopRelationRepository;
-    }			
+         
+     }				
     
     @GetMapping
     public String index(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, @RequestParam(name = "keyword", required = false) String keyword) {
