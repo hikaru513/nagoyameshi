@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,20 +15,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.nagoyameshi.entity.CategoryShopRelation;
+import com.example.nagoyameshi.entity.Favorite;
+import com.example.nagoyameshi.entity.Review;
 import com.example.nagoyameshi.entity.Shop;
+import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationInputForm;
 import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
+import com.example.nagoyameshi.repository.FavoriteRepository;
+import com.example.nagoyameshi.repository.ReviewRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
+import com.example.nagoyameshi.security.UserDetailsImpl;
+import com.example.nagoyameshi.service.FavoriteService;
+import com.example.nagoyameshi.service.ReviewService;
+
 
 @Controller
 @RequestMapping("/shops")
 public class ShopController {
     private final ShopRepository shopRepository; 
     private final CategoryShopRelationRepository categoryShopRelationRepository;
-    
-    public ShopController(ShopRepository shopRepository, CategoryShopRelationRepository categoryShopRelationRepository) {
+    private final ReviewRepository reviewRepository;
+	private final FavoriteRepository favoriteRepository;
+	private final ReviewService reviewService;
+	private final FavoriteService favoriteService;
+	
+    public ShopController(ShopRepository shopRepository, CategoryShopRelationRepository categoryShopRelationRepository, ReviewRepository reviewRepository,
+			ReviewService reviewService, FavoriteRepository favoriteRepository, FavoriteService favoriteService) {
         this.shopRepository = shopRepository;
         this.categoryShopRelationRepository = categoryShopRelationRepository;
+        this.reviewRepository = reviewRepository;
+		this.reviewService = reviewService;
+		this.favoriteService = favoriteService;
+		this.favoriteRepository = favoriteRepository;
     }  
 
     @GetMapping
@@ -78,12 +97,34 @@ public class ShopController {
     }
     
     @GetMapping("/{id}")
-    public String show(@PathVariable(name = "id") Integer id, Model model) {
+    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    	Favorite favorite = null;
+  	  boolean isFavorite =false;
+  	  
         Shop shop = shopRepository.getReferenceById(id);
+        boolean userPosted = false;
+        
+        if(userDetailsImpl != null) {
+  		  User user = userDetailsImpl.getUser();
+  		  userPosted = reviewService.reviewJudge(shop, user);
+  		  isFavorite = favoriteService.favoriteJudge(shop, user);
+  		  if(isFavorite) {
+  			  favorite = favoriteRepository.findByShopAndUser(shop, user);
+  		}
+  	  }
         List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
         
+        List<Review> reviewList = reviewRepository.findTop6ByShopOrderByCreatedAtDesc(shop);
+  	  	long reviewCount = reviewRepository.countByShop(shop);
+  	  	
         model.addAttribute("categoryShopRelation", categoryShopRelation);
-        
+        model.addAttribute("reservationInputForm", new ReservationInputForm());
+  	  	model.addAttribute("userPosted", userPosted);
+  	  	model.addAttribute("reviewList", reviewList);
+  	  	model.addAttribute("reviewCount", reviewCount);
+  	  	model.addAttribute("favorite", favorite);
+  	  	model.addAttribute("isFavorite", isFavorite);
+  	  
         model.addAttribute("shop", shop);
         
         model.addAttribute("reservationInputForm", new ReservationInputForm());

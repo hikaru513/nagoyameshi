@@ -118,6 +118,23 @@ html {
    object-fit: cover;
  }
  
+ .nagoyameshi-sort-box {
+    width: 150px; 
+}
+
+.nagoyameshi-star {
+	color: #ffa500;
+}
+
+.nagoyameshi-star:focus {
+	color: #ffa500;
+}
+
+.favorite-button {
+	color: #5196a6;
+	text-align:right;
+}
+
  .nagoyameshi-search-form {
      max-width: 300px;
  }
