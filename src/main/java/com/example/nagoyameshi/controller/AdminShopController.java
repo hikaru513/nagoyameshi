@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.nagoyameshi.entity.Category;
 import com.example.nagoyameshi.entity.CategoryShopRelation;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.form.ShopEditForm;
 import com.example.nagoyameshi.form.ShopRegisterForm;
+import com.example.nagoyameshi.repository.CategoryRepository;
 import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.service.ShopService;
@@ -32,14 +34,16 @@ import com.example.nagoyameshi.service.ShopService;
 @Controller
 @RequestMapping("/admin/shops")
 public class AdminShopController {
-     private final ShopRepository shopRepository;   
+     private final ShopRepository shopRepository; 
+     private final CategoryRepository categoryRepository; 
      private final ShopService shopService;
      private final CategoryShopRelationRepository categoryShopRelationRepository;
     
-     public AdminShopController(ShopRepository shopRepository, ShopService shopService, CategoryShopRelationRepository categoryShopRelationRepository) {
+     public AdminShopController(ShopRepository shopRepository, ShopService shopService, CategoryShopRelationRepository categoryShopRelationRepository, CategoryRepository categoryRepository) {
     	 this.shopRepository = shopRepository; 
          this.shopService = shopService;  
          this.categoryShopRelationRepository = categoryShopRelationRepository;
+         this.categoryRepository = categoryRepository;
          
      }				
     
@@ -81,6 +85,10 @@ public class AdminShopController {
                                         .collect(Collectors.toList());
         
         model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+        
+        List<Category> categories = categoryRepository.findAll();
+        
+        model.addAttribute("categories", categories);
         
         
         return "admin/shops/register";

@@ -54,37 +54,6 @@
 							<!-- 選択された画像の表示場所 -->
 							<div class="row" id="imagePreview"></div>
 
-							<!-- 略他のフォームコンテンツ -->
-							<div class="form-group row mb-3">
-								<div class="col-md-4">
-									<label for="categories" class="col-form-label text-md-left fw-bold">カテゴリ</label>
-								</div>
-								<div class="col-md-8">
-									<div th:if="${#fields.hasErrors('categories')}" class="text-danger small mb-2"
-										th:errors="*{categories}"></div>
-									<select class="form-control" id="categoriesSelect" multiple>
-										<option th:each="category : ${categoryOptions}" th:value="${category.id}"
-											th:text="${category.name}"></option>
-									</select>
-									<input type="hidden" id="categories" th:field="*{categories}">
-									<div id="selectedCategories" class="mt-2"></div>
-								</div>
-							</div>
-
-							<script type="text/javascript">
-								document.addEventListener("DOMContentLoaded", function () {
-									const categoriesSelect = document.getElementById("categoriesSelect");
-									const categoriesInput = document.getElementById("categories");
-									const selectedCategoriesDiv = document.getElementById("selectedCategories");
-
-									categoriesSelect.addEventListener("change", function () {
-										const selectedOptions = Array.from(categoriesSelect.selectedOptions).map(option => option.text);
-										categoriesInput.value = Array.from(categoriesSelect.selectedOptions).map(option => option.value).join(",");
-										selectedCategoriesDiv.innerHTML = "選択されたカテゴリ: " + selectedOptions.join(", ");
-									});
-								});
-							</script>
-
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
 									<label for="description" class="col-form-label text-md-left fw-bold">説明</label>
@@ -148,7 +117,6 @@
 							</div>
 
 
-
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
 									<label for="postalCode" class="col-form-label text-md-left fw-bold">郵便番号</label>
@@ -181,6 +149,26 @@
 									<input type="text" class="form-control" th:field="*{phoneNumber}">
 								</div>
 							</div>
+							
+							<th:block th:each="i : ${#numbers.sequence(0, 2)}">
+								<div class="form-group row mb-3">
+									<label th:for="${'category' + (i + 1)}"
+										class="col-md-5 col-form-label text-md-left fw-bold"
+										th:text="${'カテゴリ' + (i + 1) + '（3つまで選択可）'}"></label>
+
+									<div class="col-md-7">
+										<select class="form-control form-select" th:id="${'category' + (i + 1)}"
+											name="categoryIds[]">
+											<option value="">選択なし</option>
+											<div th:each="category : ${categories}">
+												<option th:value="${category.getId()}"
+													th:selected="${shopRegisterForm.categoryIds != null && i < shopRegisterForm.categoryIds.size() ? shopRegisterForm.categoryIds[i] == category.getId() : false}"
+													th:text="${category.getName()}"></option>
+											</div>
+										</select>
+									</div>
+								</div>
+							</th:block>
 
 
 							<div class="form-group d-flex justify-content-center my-4">

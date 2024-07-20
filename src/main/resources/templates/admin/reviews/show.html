@@ -14,10 +14,15 @@
          
          <link th:href="@{/css/style.css}" rel="stylesheet" >
          
+         <div th:replace="~{fragment :: meta}"></div>   
+              
+         <div th:replace="~{fragment :: styles}"></div> 
+         
          <title>レビュー詳細</title>       
      </head>
      <body>
          <div class="nagoyameshi-wrapper">
+			 <div th:replace="~{fragment :: header}"></div>
              <!-- ヘッダー -->
              <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm nagoyameshi-navbar">
                  <div class="container nagoyameshi-container">
@@ -41,7 +46,7 @@
                              
                              <div class="d-flex justify-content-end align-items-end mb-3">                    
                                  <div>
-                                     <a href="#">編集</a>                                    
+                                     <a th:href="@{/admin/reviews/__${review.getId()}__/edit}">編集</a>                                    
                                  </div>
                              </div>                                                    
                              

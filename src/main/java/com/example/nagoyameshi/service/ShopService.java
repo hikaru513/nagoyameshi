@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,15 +19,18 @@ import com.example.nagoyameshi.repository.ShopRepository;
 @Service
 public class ShopService {
 	private final ShopRepository shopRepository;
+	private final CategoryShopRelationService categoryShopRelationService;
 
-	public ShopService(ShopRepository shopRepository) {
+	public ShopService(ShopRepository shopRepository, CategoryShopRelationService categoryShopRelationService) {
 		this.shopRepository = shopRepository;
+		this.categoryShopRelationService = categoryShopRelationService;
 	}
 
 	@Transactional
 	public void create(ShopRegisterForm shopRegisterForm) {
 		Shop shop = new Shop();
 		MultipartFile imageFile = shopRegisterForm.getImageFile();
+		List<Integer> categoryIds = shopRegisterForm.getCategoryIds();
 
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
@@ -48,11 +50,12 @@ public class ShopService {
 		shop.setAddress(shopRegisterForm.getAddress());
 		shop.setPhoneNumber(shopRegisterForm.getPhoneNumber());
 
-		// カンマ区切りのカテゴリをリストに変換
-		List<String> setCategories = Arrays.asList(shopRegisterForm.getCategories().split(","));
-		// TODO: カテゴリを保存するロジックを追加
 
 		shopRepository.save(shop);
+		
+		if (categoryIds != null) {
+            categoryShopRelationService.create(categoryIds, shop);
+        }    
 
 	}
 

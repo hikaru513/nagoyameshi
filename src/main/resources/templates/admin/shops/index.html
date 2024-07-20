@@ -25,7 +25,8 @@
                                          <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名">
                                          <button type="submit" class="btn text-white shadow-sm nagoyameshi-btn">検索</button> 
                                      </div>               
-                                 </form>                                
+                                 </form>                                   
+                                 <a th:href="@{/admin/shops/register}" class="btn text-white shadow-sm mb-3 nagoyameshi-btn">登録</a>
                              </div> 
                              
                               <div th:if="${successMessage}" class="alert alert-info">
