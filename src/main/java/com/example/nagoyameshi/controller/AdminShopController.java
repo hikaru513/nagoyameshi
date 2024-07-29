@@ -34,147 +34,154 @@ import com.example.nagoyameshi.service.ShopService;
 @Controller
 @RequestMapping("/admin/shops")
 public class AdminShopController {
-     private final ShopRepository shopRepository; 
-     private final CategoryRepository categoryRepository; 
-     private final ShopService shopService;
-     private final CategoryShopRelationRepository categoryShopRelationRepository;
-    
-     public AdminShopController(ShopRepository shopRepository, ShopService shopService, CategoryShopRelationRepository categoryShopRelationRepository, CategoryRepository categoryRepository) {
-    	 this.shopRepository = shopRepository; 
-         this.shopService = shopService;  
-         this.categoryShopRelationRepository = categoryShopRelationRepository;
-         this.categoryRepository = categoryRepository;
-         
-     }				
-    
-    @GetMapping
-    public String index(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, @RequestParam(name = "keyword", required = false) String keyword) {
-    	Page<Shop> shopPage;
-        
-        if (keyword != null && !keyword.isEmpty()) {
-            shopPage = shopRepository.findByNameLike("%" + keyword + "%", pageable);                
-        } else {
-            shopPage = shopRepository.findAll(pageable);
-        }  
-               
-       model.addAttribute("shopPage", shopPage);   
-        model.addAttribute("keyword", keyword);
-       
-       return "admin/shops/index";
-   }  
-    @GetMapping("/{id}")
-    public String show(@PathVariable(name = "id") Integer id, Model model) {
-        Shop shop = shopRepository.getReferenceById(id);
-        List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
-        
-        model.addAttribute("categoryShopRelation", categoryShopRelation);
+	private final ShopRepository shopRepository;
+	private final CategoryRepository categoryRepository;
+	private final ShopService shopService;
+	private final CategoryShopRelationRepository categoryShopRelationRepository;
 
-        model.addAttribute("shop", shop);
-        
-        return "admin/shops/show";
-    }    
-    
-    @GetMapping("/register")
-    public String register(Model model) {
-    	 
-        model.addAttribute("shopRegisterForm", new ShopRegisterForm());
-        
-        // 時間オプションを生成
-        List<String> options = IntStream.rangeClosed(0, 47)
-                                        .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-                                        .collect(Collectors.toList());
-        
-        model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
-        
-        List<Category> categories = categoryRepository.findAll();
-        
-        model.addAttribute("categories", categories);
-        
-        
-        return "admin/shops/register";
-    }
-    
-    @PostMapping("/create")
-    public String create(@ModelAttribute @Validated ShopRegisterForm shopRegisterForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, 
-            Model model) {        
-        if (bindingResult.hasErrors()) {
-            
-            // 時間オプションを再生成してモデルに追加
-            List<String> options = IntStream.rangeClosed(0, 47)
-                                            .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-                                            .collect(Collectors.toList());
+	public AdminShopController(ShopRepository shopRepository, ShopService shopService,
+			CategoryShopRelationRepository categoryShopRelationRepository, CategoryRepository categoryRepository) {
+		this.shopRepository = shopRepository;
+		this.shopService = shopService;
+		this.categoryShopRelationRepository = categoryShopRelationRepository;
+		this.categoryRepository = categoryRepository;
 
-            model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
-            
-            return "admin/shops/register";
-        }
-     // 開店時間と閉店時間のバリデーション
-        LocalTime openingTime = shopRegisterForm.getOpeningTime();
-        LocalTime closingTime = shopRegisterForm.getClosingTime();
-        
-        if (closingTime.isBefore(openingTime)) {
-            bindingResult.rejectValue("closingTime", "error.closingTime", "閉店時間は開店時間より後の時間を設定してください。");
+	}
 
-            // 時間オプションを再生成してモデルに追加
-            List<String> options = IntStream.rangeClosed(0, 47)
-                                            .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-                                            .collect(Collectors.toList());
+	@GetMapping
+	public String index(Model model,
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+			@RequestParam(name = "keyword", required = false) String keyword) {
+		Page<Shop> shopPage;
 
-            model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
-            return "admin/shops/register";
-        }
-        
-        shopService.create(shopRegisterForm);
-        redirectAttributes.addFlashAttribute("successMessage", "店舗を登録しました。");    
-        
-        return "redirect:/admin/shops";
-    }
-    
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable(name = "id") Integer id, Model model) {
-        Shop shop = shopRepository.getReferenceById(id);
-        String imageName = shop.getImageName();
-        ShopEditForm shopEditForm = new ShopEditForm(shop.getId(), shop.getName(), null, shop.getDescription(), 
-                                                     shop.getOpeningTime(), shop.getClosingTime(), shop.getRegularOff(), 
-                                                     shop.getPrice(), shop.getPostalCode(), shop.getAddress(), shop.getPhoneNumber());
-        
-        model.addAttribute("imageName", imageName);
-        model.addAttribute("shopEditForm", shopEditForm);
+		if (keyword != null && !keyword.isEmpty()) {
+			shopPage = shopRepository.findByNameLike("%" + keyword + "%", pageable);
+		} else {
+			shopPage = shopRepository.findAll(pageable);
+		}
 
-        // 時間オプションを生成
-        List<String> options = IntStream.rangeClosed(0, 47)
-                                        .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-                                        .collect(Collectors.toList());
-        
-        model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+		model.addAttribute("shopPage", shopPage);
+		model.addAttribute("keyword", keyword);
 
-        return "admin/shops/edit";
-    } 
-    
-    @PostMapping("/{id}/update")
-    public String update(@ModelAttribute @Validated ShopEditForm shopEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {        
-        if (bindingResult.hasErrors()) {
-            // 時間オプションを再生成してモデルに追加
-            List<String> options = IntStream.rangeClosed(0, 47)
-                                            .mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-                                            .collect(Collectors.toList());
+		return "admin/shops/index";
+	}
 
-            model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
-            return "admin/shops/edit";
-        }
-        
-        shopService.update(shopEditForm);
-        redirectAttributes.addFlashAttribute("successMessage", "店舗情報を編集しました。");
-        
-        return "redirect:/admin/shops";
-    }   
-    
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {        
-        shopRepository.deleteById(id);
-                
-        redirectAttributes.addFlashAttribute("successMessage", "店舗を削除しました。");
-        
-        return "redirect:/admin/shops";
-    } 
+	@GetMapping("/{id}")
+	public String show(@PathVariable(name = "id") Integer id, Model model) {
+		Shop shop = shopRepository.getReferenceById(id);
+		List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
+
+		model.addAttribute("categoryShopRelation", categoryShopRelation);
+
+		model.addAttribute("shop", shop);
+
+		return "admin/shops/show";
+	}
+
+	@GetMapping("/register")
+	public String register(Model model) {
+		
+
+		model.addAttribute("shopRegisterForm", new ShopRegisterForm());
+
+		// 時間オプションを生成
+		List<String> options = IntStream.rangeClosed(0, 47)
+				.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+				.collect(Collectors.toList());
+
+		model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+
+		List<Category> categories = categoryRepository.findAll();
+
+		model.addAttribute("categories", categories);
+
+
+		return "admin/shops/register";
+	}
+
+	@PostMapping("/create")
+	public String create(@ModelAttribute @Validated ShopRegisterForm shopRegisterForm, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+
+			// 時間オプションを再生成してモデルに追加
+			List<String> options = IntStream.rangeClosed(0, 47)
+					.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+					.collect(Collectors.toList());
+
+			model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+
+			return "admin/shops/register";
+		}
+		// 開店時間と閉店時間のバリデーション
+		LocalTime openingTime = shopRegisterForm.getOpeningTime();
+		LocalTime closingTime = shopRegisterForm.getClosingTime();
+
+		if (closingTime.isBefore(openingTime)) {
+			bindingResult.rejectValue("closingTime", "error.closingTime", "閉店時間は開店時間より後の時間を設定してください。");
+
+			// 時間オプションを再生成してモデルに追加
+			List<String> options = IntStream.rangeClosed(0, 47)
+					.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+					.collect(Collectors.toList());
+
+			model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+			return "admin/shops/register";
+		}
+
+		shopService.create(shopRegisterForm);
+		redirectAttributes.addFlashAttribute("successMessage", "店舗を登録しました。");
+
+		return "redirect:/admin/shops";
+	}
+
+	@GetMapping("/{id}/edit")
+	public String edit(@PathVariable(name = "id") Integer id, Model model) {
+		Shop shop = shopRepository.getReferenceById(id);
+		String imageName = shop.getImageName();
+		ShopEditForm shopEditForm = new ShopEditForm(shop.getId(), shop.getName(), null, shop.getDescription(),
+				shop.getOpeningTime(), shop.getClosingTime(), shop.getRegularOff(),
+				shop.getPrice(), shop.getPostalCode(), shop.getAddress(), shop.getPhoneNumber());
+
+		model.addAttribute("imageName", imageName);
+		model.addAttribute("shopEditForm", shopEditForm);
+
+		// 時間オプションを生成
+		List<String> options = IntStream.rangeClosed(0, 47)
+				.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+				.collect(Collectors.toList());
+
+		model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+
+		return "admin/shops/edit";
+	}
+
+	@PostMapping("/{id}/update")
+	public String update(@ModelAttribute @Validated ShopEditForm shopEditForm, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes, Model model) {
+		if (bindingResult.hasErrors()) {
+			// 時間オプションを再生成してモデルに追加
+			List<String> options = IntStream.rangeClosed(0, 47)
+					.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+					.collect(Collectors.toList());
+
+			model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する
+			return "admin/shops/edit";
+		}
+
+		shopService.update(shopEditForm);
+		redirectAttributes.addFlashAttribute("successMessage", "店舗情報を編集しました。");
+
+		return "redirect:/admin/shops";
+	}
+
+	@PostMapping("/{id}/delete")
+	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+		shopRepository.deleteById(id);
+
+		redirectAttributes.addFlashAttribute("successMessage", "店舗を削除しました。");
+
+		return "redirect:/admin/shops";
+	}
 }

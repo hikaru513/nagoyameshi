@@ -54,6 +54,7 @@ public class AdminReviewController {
          Review review = reviewRepository.getReferenceById(id);
          ReviewEditForm reviewEditForm = new ReviewEditForm(review.getId(), review.getScore(), review.getContent());
          
+         model.addAttribute("reviewEditForm", reviewEditForm);
          model.addAttribute("review", review); 
 
          return "admin/reviews/edit";

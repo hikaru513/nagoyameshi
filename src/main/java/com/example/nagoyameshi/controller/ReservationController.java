@@ -1,5 +1,8 @@
 package com.example.nagoyameshi.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -12,12 +15,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.nagoyameshi.entity.Reservation;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationInputForm;
+import com.example.nagoyameshi.form.ReservationRegisterForm;
 import com.example.nagoyameshi.repository.ReservationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.security.UserDetailsImpl;
@@ -59,5 +64,40 @@ public class ReservationController {
         redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);           
         
         return "redirect:/shops/{id}/reservations/confirm";
+    }    
+    
+    @GetMapping("/shops/{id}/reservations/confirm")
+    public String confirm(
+        @PathVariable(name = "id") Integer id,
+        @ModelAttribute ReservationInputForm reservationInputForm,
+        @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,                          
+        Model model) 
+    {
+        Shop shop = shopRepository.getReferenceById(id);
+        User user = userDetailsImpl.getUser(); 
+        
+        // 予約日を取得する
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate reservationDate = LocalDate.parse(reservationInputForm.getReservationDate(), formatter);
+
+        // 予約人数を計算する
+        Integer numberOfPeople = reservationInputForm.getNumberOfPeople();      
+        
+        ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(
+            shop.getId(), user.getId(), reservationDate.toString(), reservationInputForm.getNumberOfPeople()
+        );
+        
+        model.addAttribute("shop", shop);  
+        model.addAttribute("reservationRegisterForm", reservationRegisterForm);       
+        
+        return "reservations/confirm";
+    }   
+    @PostMapping("/reservations/delete")
+    public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {        
+        shopRepository.deleteById(id);
+                
+        redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
+        
+        return "reservations/index";
     }    
 }
