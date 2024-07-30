@@ -34,6 +34,11 @@
 			</div>
 		</nav>
 
+		<!-- フラッシュメッセージの表示 -->
+		<div th:if="${successMessage}" class="alert alert-success" role="alert">
+			<span th:text="${successMessage}"></span>
+		</div>
+
 		<main>
 			<div class="container pt-4 pb-5 nagoyameshi-container">
 				<div class="row justify-content-center">
@@ -83,13 +88,14 @@
 												<div class="modal-header">
 													<h5 class="modal-title"
 														th:id="${'deleteReviewModalLabel' + review.getId()}"
-														th:text="${'削除してもよろしいですか？'}"></h5>
+														th:text="'削除してもよろしいですか？'"></h5>
 													<button type="button" class="btn-close" data-bs-dismiss="modal"
 														aria-label="閉じる"></button>
 												</div>
 												<div class="modal-footer">
 													<form method="post"
-														th:action="@{/reviews/__${review.getId()}__/reviews/__${review.getId()}__/delete}">
+														th:action="@{/admin/reviews/__${review.getId()}__/delete}"
+														name="deleteReviewForm">
 														<button type="submit"
 															class="btn nagoyameshi-btn-danger text-white shadow-sm">削除</button>
 													</form>
@@ -100,6 +106,7 @@
 								</tr>
 							</tbody>
 						</table>
+
 
 						<!-- ページネーション -->
 						<div th:if="${reviewPage.getTotalPages() > 1}" class="d-flex justify-content-center">

@@ -29,6 +29,11 @@
 							</ol>
 						</nav>
 						
+						<!-- フラッシュメッセージの表示 -->
+						<div th:if="${successMessage}" class="alert alert-success" role="alert">
+							<span th:text="${successMessage}"></span>
+						</div>
+						
 						<div sec:authorize="isAuthenticated()">
 									 <div th:if="${isFavorite}">
 										 <div class = "favorite-button"><a href="#" onclick="event.preventDefault(); document.getElementById('favorite-form').submit();">&#9829; お気に入り解除</a></div> 

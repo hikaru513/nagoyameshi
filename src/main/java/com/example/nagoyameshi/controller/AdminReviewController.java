@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.nagoyameshi.entity.Review;
 import com.example.nagoyameshi.form.ReviewEditForm;
 import com.example.nagoyameshi.repository.ReviewRepository;
+import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.service.ReviewService;
  
  @Controller
@@ -25,10 +26,12 @@ import com.example.nagoyameshi.service.ReviewService;
 public class AdminReviewController {
      private final ReviewRepository reviewRepository;
      private final ReviewService reviewService;
+     private final ShopRepository shopRepository;
      
-     public AdminReviewController(ReviewRepository reviewRepository, ReviewService reviewService) {
+     public AdminReviewController(ReviewRepository reviewRepository, ReviewService reviewService, ShopRepository shopRepository) {
          this.reviewRepository = reviewRepository;    
          this.reviewService = reviewService;
+         this.shopRepository = shopRepository;
      }	
      
      @GetMapping
@@ -58,27 +61,36 @@ public class AdminReviewController {
          model.addAttribute("review", review); 
 
          return "admin/reviews/edit";
-     } 
+     }  
      
      @PostMapping("/{id}/update")
-     public String update(@ModelAttribute @Validated ReviewEditForm reviewEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {        
+     public String update(@PathVariable(name = "id") Integer id,
+                          @ModelAttribute @Validated ReviewEditForm reviewEditForm,
+                          BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          Model model) {
+    	 
+         Review review = reviewRepository.getReferenceById(id);
+
          if (bindingResult.hasErrors()) {
+             model.addAttribute("review", review);
              return "admin/reviews/edit";
          }
-         
+
          reviewService.update(reviewEditForm);
-         redirectAttributes.addFlashAttribute("successMessage", "レビュー情報を編集しました。");
-         
+         redirectAttributes.addFlashAttribute("successMessage", "レビューを編集しました。");
+
          return "redirect:/admin/reviews";
-     }      
+     }
+      
      
      @PostMapping("/{id}/delete")
-     public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {        
+     public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
          reviewRepository.deleteById(id);
-                 
+
          redirectAttributes.addFlashAttribute("successMessage", "レビューを削除しました。");
-         
-         return "redirect:admin/reviews";
-     } 
+
+         return "redirect:/admin/reviews";
+     }
  }
 

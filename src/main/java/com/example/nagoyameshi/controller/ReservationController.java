@@ -2,6 +2,7 @@ package com.example.nagoyameshi.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +19,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.nagoyameshi.entity.CategoryShopRelation;
 import com.example.nagoyameshi.entity.Reservation;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationInputForm;
 import com.example.nagoyameshi.form.ReservationRegisterForm;
+import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
 import com.example.nagoyameshi.repository.ReservationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.security.UserDetailsImpl;
@@ -31,10 +34,13 @@ import com.example.nagoyameshi.security.UserDetailsImpl;
 public class ReservationController {
 	private final ReservationRepository reservationRepository;
 	private final ShopRepository shopRepository;
+	private final CategoryShopRelationRepository categoryShopRelationRepository;
+	
     
-    public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository) {          
+    public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository, CategoryShopRelationRepository categoryShopRelationRepository) {          
         this.reservationRepository = reservationRepository;
         this.shopRepository = shopRepository;
+        this.categoryShopRelationRepository = categoryShopRelationRepository;
     }    
 
     @GetMapping("/reservations")
@@ -53,10 +59,12 @@ public class ReservationController {
                         RedirectAttributes redirectAttributes,
                         Model model)
     {   
-        Shop shop = shopRepository.getReferenceById(id);            
+        Shop shop = shopRepository.getReferenceById(id);   
+        List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
         
         if (bindingResult.hasErrors()) {            
             model.addAttribute("shop", shop);            
+            model.addAttribute("categoryShopRelation", categoryShopRelation);
             model.addAttribute("errorMessage", "予約内容に不備があります。"); 
             return "shops/show";
         }
