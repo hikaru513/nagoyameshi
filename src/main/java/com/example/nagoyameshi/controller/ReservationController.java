@@ -100,12 +100,12 @@ public class ReservationController {
         
         return "reservations/confirm";
     }   
-    @PostMapping("/reservations/delete")
-    public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {        
-        shopRepository.deleteById(id);
-                
+    @PostMapping("/shops/{id}/delete")
+    public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+        reservationRepository.deleteById(id);
+
         redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
-        
-        return "reservations/index";
-    }    
+
+        return "redirect:/reservations";
+    }  
 }
