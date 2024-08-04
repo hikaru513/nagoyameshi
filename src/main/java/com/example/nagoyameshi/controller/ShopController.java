@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.nagoyameshi.entity.Category;
 import com.example.nagoyameshi.entity.CategoryShopRelation;
 import com.example.nagoyameshi.entity.Favorite;
 import com.example.nagoyameshi.entity.Review;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationInputForm;
+import com.example.nagoyameshi.repository.CategoryRepository;
 import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
 import com.example.nagoyameshi.repository.FavoriteRepository;
 import com.example.nagoyameshi.repository.ReviewRepository;
@@ -28,75 +30,83 @@ import com.example.nagoyameshi.security.UserDetailsImpl;
 import com.example.nagoyameshi.service.FavoriteService;
 import com.example.nagoyameshi.service.ReviewService;
 
-
 @Controller
 @RequestMapping("/shops")
 public class ShopController {
-    private final ShopRepository shopRepository; 
-    private final CategoryShopRelationRepository categoryShopRelationRepository;
-    private final ReviewRepository reviewRepository;
+	private final ShopRepository shopRepository;
+	private final CategoryRepository categoryRepository;
+	private final CategoryShopRelationRepository categoryShopRelationRepository;
+	private final ReviewRepository reviewRepository;
 	private final FavoriteRepository favoriteRepository;
 	private final ReviewService reviewService;
 	private final FavoriteService favoriteService;
-	
-    public ShopController(ShopRepository shopRepository, CategoryShopRelationRepository categoryShopRelationRepository, ReviewRepository reviewRepository,
+
+	public ShopController(ShopRepository shopRepository,
+			CategoryRepository categoryRepository, CategoryShopRelationRepository categoryShopRelationRepository,
+			ReviewRepository reviewRepository,
 			ReviewService reviewService, FavoriteRepository favoriteRepository, FavoriteService favoriteService) {
-        this.shopRepository = shopRepository;
-        this.categoryShopRelationRepository = categoryShopRelationRepository;
-        this.reviewRepository = reviewRepository;
+		this.shopRepository = shopRepository;
+		this.categoryRepository = categoryRepository;
+		this.categoryShopRelationRepository = categoryShopRelationRepository;
+		this.reviewRepository = reviewRepository;
 		this.reviewService = reviewService;
 		this.favoriteService = favoriteService;
 		this.favoriteRepository = favoriteRepository;
-    }  
+	}
 
-    @GetMapping
-    public String index(@RequestParam(name = "keyword", required = false) String keyword,
-                        @RequestParam(name = "area", required = false) String area,
-                        @RequestParam(name = "price", required = false) Integer price,
-                        @RequestParam(name = "categoryshoprelation", required = false) String categoryshoprelation,
-                        @RequestParam(name = "order", required = false) String order,
-                        @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
-                        Model model) 
-    {
-        Page<Shop> shopPage;
-                
-        if (keyword != null && !keyword.isEmpty()) {
-        	if (order != null && order.equals("priceAsc")) {
-                shopPage = shopRepository.findByNameLikeOrAddressLikeOrderByPriceAsc("%" + keyword + "%", "%" + keyword + "%", pageable);
-            } else {
-                shopPage = shopRepository.findByNameLikeOrAddressLikeOrderByCreatedAtDesc("%" + keyword + "%", "%" + keyword + "%", pageable);
-            }   
-        } else if (area != null && !area.isEmpty()) {
-        	if (order != null && order.equals("priceAsc")) {
-                shopPage = shopRepository.findByAddressLikeOrderByPriceAsc("%" + area + "%", pageable);
-            } else {
-                shopPage = shopRepository.findByAddressLikeOrderByCreatedAtDesc("%" + area + "%", pageable);
-            }  
-        } else if (price != null) {
-        	if (order != null && order.equals("priceAsc")) {
-                shopPage = shopRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
-            } else {
-                shopPage = shopRepository.findByPriceLessThanEqualOrderByCreatedAtDesc(price, pageable);
-            }
-        } else {
-        	if (order != null && order.equals("priceAsc")) {
-                shopPage = shopRepository.findAllByOrderByPriceAsc(pageable);
-            } else {
-                shopPage = shopRepository.findAllByOrderByCreatedAtDesc(pageable);   
-            }  
-        }                
-        
-        model.addAttribute("shopPage", shopPage);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("area", area);
-        model.addAttribute("price", price);
-        model.addAttribute("categoryshoprelation", categoryshoprelation);
-        model.addAttribute("order", order);
-        
-        return "shops/index";
-    }
-    
-    @GetMapping("/{id}")
+	@GetMapping
+	public String index(@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "area", required = false) String area,
+			@RequestParam(name = "price", required = false) Integer price,
+			@RequestParam(name = "categoryId", required = false) Integer categoryId,
+			@RequestParam(name = "order", required = false) String order,
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+			Model model) {
+
+		Page<Shop> shopPage;
+
+		// キーワード検索
+		if (keyword != null && !keyword.isEmpty() || area != null && !area.isEmpty() || categoryId != null) {
+			shopPage = shopRepository.findByKeywordAndFilters(keyword != null ? keyword : "",
+					area != null ? area : "",
+					categoryId,
+					pageable);
+		} else if (area != null && !area.isEmpty()) {
+			if (order != null && order.equals("priceAsc")) {
+				shopPage = shopRepository.findByAddressLikeOrderByPriceAsc("%" + area + "%", pageable);
+			} else {
+				shopPage = shopRepository.findByAddressLikeOrderByCreatedAtDesc("%" + area + "%", pageable);
+			}
+		} else if (price != null) {
+			if (order != null && order.equals("priceAsc")) {
+				shopPage = shopRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
+			} else {
+				shopPage = shopRepository.findByPriceLessThanEqualOrderByCreatedAtDesc(price, pageable);
+			}
+		} else if (categoryId != null) {
+			shopPage = shopRepository.findByCategoryId(categoryId, pageable);
+		} else {
+			if (order != null && order.equals("priceAsc")) {
+				shopPage = shopRepository.findAllByOrderByPriceAsc(pageable);
+			} else {
+				shopPage = shopRepository.findAllByOrderByCreatedAtDesc(pageable);
+			}
+		}
+		
+		List<Category> categories = categoryRepository.findAll();
+		
+		model.addAttribute("shopPage", shopPage);
+		model.addAttribute("categories", categories);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("area", area);
+		model.addAttribute("price", price);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("order", order);
+
+		return "shops/index";
+	}
+
+	@GetMapping("/{id}")
     public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
     	Favorite favorite = null;
   	  boolean isFavorite =false;

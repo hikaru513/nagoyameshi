@@ -20,7 +20,7 @@ public class CategoryService {
     public void create(CategoryRegisterForm categoryRegisterForm) {
     	
     	if (categoryRepository.existsByName(categoryRegisterForm.getName())) {
-            throw new IllegalArgumentException("このカテゴリーは既に登録してあります");
+            throw new IllegalArgumentException("このカテゴリは既に登録してあります");
         }
         Category category = new Category();        
         
@@ -32,7 +32,7 @@ public class CategoryService {
     @Transactional
     public void updateCategory(Integer id, String newName) {
         if (categoryRepository.existsByName(newName) && !categoryRepository.getReferenceById(id).getName().equals(newName)) {
-            throw new IllegalArgumentException("このカテゴリーは既に登録してあります");
+            throw new IllegalArgumentException("このカテゴリは既に登録してあります");
         }
         Category category = categoryRepository.getReferenceById(id);
         category.setName(newName);        

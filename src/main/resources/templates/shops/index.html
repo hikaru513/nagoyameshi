@@ -25,7 +25,7 @@
                          <div class="col-xl-3 col-lg-4 col-md-12">               
                              <form method="get" th:action="@{/shops}" class="w-100 mb-3">
                                  <div class="input-group">
-                                     <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・目的地">
+                                     <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・目的地・カテゴリ">
                                      <button type="submit" class="btn text-white shadow-sm nagoyameshi-btn">検索</button> 
                                  </div>               
                              </form>
@@ -148,50 +148,26 @@
                              </div>
                              
                              <div class="card mb-3">
-                                 <div class="card-header">
-                                     カテゴリーから探す
-                                 </div>
-                                 <div class="card-body">
-                                     <form method="get" th:action="@{/shops}" class="w-100">
-                                         <div class="form-group mb-3">    
-                                             <select class="form-control form-select" name="category">
-                                                 <option value="" hidden>選択してください</option>
-                                                 <option value="居酒屋" th:selected="${categoryShopRelation == 居酒屋}">居酒屋</option>
-                                                 <option value="ハンバーガー" th:selected="${categoryShopRelation == ハンバーガー}">ハンバーガー</option>
-                                                 <option value="寿司" th:selected="${categoryShopRelation == 寿司}">寿司</option>
-                                                 <option value="和食" th:selected="${categoryShopRelation == 和食}">和食</option>
-                                                 <option value="カレー" th:selected="${categoryShopRelation == カレー}">カレー</option> 
-                                                 <option value="イタリア料理" th:selected="${categoryShopRelation == イタリア料理}">イタリア料理</option>
-                                                 <option value="中華料理" th:selected="${categoryShopRelation == 中華料理}">中華料理</option>
-                                                 <option value="フランス料理" th:selected="${categoryShopRelation == フランス料理}">フランス料理</option>
-                                                 <option value="韓国料理" th:selected="${categoryShopRelation == 韓国料理}">韓国料理</option>
-                                                 <option value="タイ料理" th:selected="${categoryShopRelation == タイ料理}">タイ料理</option>
-                                                 <option value="スペイン料理" th:selected="${categoryShopRelation == スペイン料理}">スペイン料理</option>
-                                                 <option value="ラーメン" th:selected="${categoryShopRelation == ラーメン}">ラーメン</option>
-                                                 <option value="そば" th:selected="${categoryShopRelation == そば}">そば</option>
-                                                 <option value="うどん" th:selected="${categoryShopRelation == うどん}">うどん</option>
-                                                 <option value="海鮮料理" th:selected="${categoryShopRelation == 海鮮料理}">海鮮料理</option> 
-                                                 <option value="丼物" th:selected="${categoryShopRelation == 丼物}">丼物</option>
-                                                 <option value="喫茶店" th:selected="${categoryShopRelation == 喫茶店}">喫茶店</option>
-                                                 <option value="鍋料理" th:selected="${categoryShopRelation == 鍋料理}">鍋料理</option>
-                                                 <option value="スイーツ" th:selected="${categoryShopRelation == スイーツ}">スイーツ</option>
-                                                 <option value="天ぷら" th:selected="${categoryShopRelation == 天ぷら}">天ぷら</option>
-                                                 <option value="お好み焼き" th:selected="${categoryShopRelation == お好み焼き}">お好み焼き</option>
-                                                 <option value="たこ焼き" th:selected="${categoryShopRelation == たこ焼き}">たこ焼き</option>
-                                                 <option value="焼き鳥" th:selected="${categoryShopRelation == 焼き鳥}">焼き鳥</option>
-                                                 <option value="ステーキ" th:selected="${categoryShopRelation == ステーキ}">ステーキ</option>
-                                                 <option value="しゃぶしゃぶ" th:selected="${categoryShopRelation == しゃぶしゃぶ}">しゃぶしゃぶ</option> 
-                                                 <option value="おでん" th:selected="${categoryShopRelation == おでん}">おでん</option>
-                                                 <option value="パン" th:selected="${categoryShopRelation == パン}">パン</option>
-                                                 <option value="すき焼き" th:selected="${categoryShopRelation == すき焼き}">すき焼き</option>
-                                             </select>                                                                                
-                                         </div>
-                                         <div class="form-group">
-                                             <button type="submit" class="btn text-white shadow-sm w-100 nagoyameshi-btn">検索</button>
-                                         </div>                                           
-                                     </form>
-                                 </div>
-                             </div>                               
+                                <div class="card-header">
+                                    カテゴリから探す
+                                </div>
+                                <div class="card-body">
+                                    <form method="get" th:action="@{/shops}" class="w-100">
+                                        <div class="form-group mb-3">
+                                            <select class="form-control form-select" name="categoryId" required>  
+                                                <option value="" hidden>選択してください</option>                                                   
+                                                <option th:each="category : ${categories}" 
+                                                        th:value="${category.getId()}"
+                                                        th:selected="${category.getId() == categoryId}"
+                                                        th:text="${category.getName()}"></option>                                                                                                
+                                            </select> 
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn text-white shadow-sm w-100 nagoyameshi-btn">検索</button>
+                                        </div>                                           
+                                    </form>
+                                </div>
+                            </div>                         
                          </div>
              
                          <div class="col">                                                                          
@@ -222,7 +198,17 @@
                                                  <div class="card-body">                                    
                                                      <h3 class="card-title mb-3" th:text="${shop.getName()}"></h3>                                            
   
-                                                     <hr class="mb-3">
+                                                     <div class="col d-flex text-secondary">
+                                                        <th:block th:unless="${shop.getCategories().isEmpty()}">
+                                                            <th:block th:each="category, stat : ${shop.getCategories()}">
+                                                                <div>
+                                                                    <span th:if="${stat.first}" th:text="${category.getName()}"></span><span th:unless="${stat.first}" th:text="${'、' + category.getName()}"></span>
+                                                                </div>
+                                                            </th:block>     
+                                                        </th:block>                         
+                                                        <span th:if="${shop.getCategories().isEmpty()}">カテゴリ未設定</span>                                                        
+                                                    </div>
+                                                    <hr class="my-2">
                                                      
                                                      <p class="card-text mb-2">
                                                          <span th:text="${shop.getDescription()}"></span>

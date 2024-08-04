@@ -2,13 +2,18 @@ package com.example.nagoyameshi.entity;
 
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
@@ -22,7 +27,7 @@ public class Shop {
 
 	@Column(name = "name")
 	private String name;
-	
+
 	@Column(name = "image_name")
 	private String imageName;
 
@@ -55,4 +60,17 @@ public class Shop {
 
 	@Column(name = "updated_at", insertable = false, updatable = false)
 	private Timestamp updatedAt;
+
+	@OneToMany(mappedBy = "shop")
+	private List<CategoryShopRelation> categoryShopRelation;
+	
+	@Transient // このアノテーションにより、Hibernateがこのフィールドをデータベースカラムとして扱わないようになる  
+    public List<Category> getCategories() {
+        if (!categoryShopRelation.isEmpty()) {
+            return categoryShopRelation.stream()
+                                      .map(CategoryShopRelation::getCategory)
+                                      .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }    
 }

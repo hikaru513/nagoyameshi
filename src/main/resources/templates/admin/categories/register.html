@@ -6,7 +6,7 @@
 
 	<div th:replace="~{fragment :: styles}"></div>
 
-	<title>カテゴリー登録</title>
+	<title>カテゴリ登録</title>
 </head>
 
 <body>
@@ -20,18 +20,18 @@
 					<div class="col-xl-5 col-lg-6 col-md-8">
 						<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 							<ol class="breadcrumb mb-0">
-								<li class="breadcrumb-item"><a th:href="@{/admin/categories}">カテゴリー一覧</a></li>
-								<li class="breadcrumb-item active" aria-current="page">カテゴリー登録</li>
+								<li class="breadcrumb-item"><a th:href="@{/admin/categories}">カテゴリ一覧</a></li>
+								<li class="breadcrumb-item active" aria-current="page">カテゴリ登録</li>
 							</ol>
 						</nav>
 
-						<h1 class="mb-4 text-center">カテゴリー登録</h1>
+						<h1 class="mb-4 text-center">カテゴリ登録</h1>
 
 						<form method="post" th:action="@{/admin/categories/create}" th:object="${categoryRegisterForm}"
 							enctype="multipart/form-data">
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
-									<label for="name" class="col-form-label text-md-left fw-bold">カテゴリー名</label>
+									<label for="name" class="col-form-label text-md-left fw-bold">カテゴリ名</label>
 								</div>
 								<div class="col-md-8">
 									<div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2"

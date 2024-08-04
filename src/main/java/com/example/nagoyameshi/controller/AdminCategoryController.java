@@ -72,7 +72,7 @@ public class AdminCategoryController {
 
         try {
             categoryService.create(categoryRegisterForm);
-            redirectAttributes.addFlashAttribute("successMessage", "カテゴリーを登録しました。");
+            redirectAttributes.addFlashAttribute("successMessage", "カテゴリを登録しました。");
             return "redirect:/admin/categories";
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("name", "error.categoryRegisterForm", e.getMessage());
@@ -98,7 +98,7 @@ public class AdminCategoryController {
         }
         try {
             categoryService.updateCategory(id, categoryEditForm.getName());
-            redirectAttributes.addFlashAttribute("successMessage", "カテゴリーを更新しました。");
+            redirectAttributes.addFlashAttribute("successMessage", "カテゴリを更新しました。");
             return "redirect:/admin/categories";
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("name", "error.categoryEditForm", e.getMessage());
@@ -110,7 +110,7 @@ public class AdminCategoryController {
     public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {        
         categoryRepository.deleteById(id);
                 
-        redirectAttributes.addFlashAttribute("successMessage", "カテゴリーを削除しました。");
+        redirectAttributes.addFlashAttribute("successMessage", "カテゴリを削除しました。");
         
         return "redirect:/admin/categories";
     }    
