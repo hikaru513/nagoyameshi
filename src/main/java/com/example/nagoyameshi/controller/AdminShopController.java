@@ -140,12 +140,16 @@ public class AdminShopController {
 	public String edit(@PathVariable(name = "id") Integer id, Model model) {
 		Shop shop = shopRepository.getReferenceById(id);
 		String imageName = shop.getImageName();
+		List<Integer> categoryIds = categoryShopRelationRepository.findCategoryIdsByShopOrderByIdAsc(shop);
 		ShopEditForm shopEditForm = new ShopEditForm(shop.getId(), shop.getName(), null, shop.getDescription(),
 				shop.getOpeningTime(), shop.getClosingTime(), shop.getRegularOff(),
-				shop.getPrice(), shop.getPostalCode(), shop.getAddress(), shop.getPhoneNumber());
+				shop.getPrice(), shop.getPostalCode(), shop.getAddress(), shop.getPhoneNumber(), categoryIds);
+		
+		 List<Category> categories = categoryRepository.findAll();
 
 		model.addAttribute("imageName", imageName);
 		model.addAttribute("shopEditForm", shopEditForm);
+		model.addAttribute("categories", categories); 
 
 		// 時間オプションを生成
 		List<String> options = IntStream.rangeClosed(0, 47)
@@ -161,6 +165,8 @@ public class AdminShopController {
 	public String update(@ModelAttribute @Validated ShopEditForm shopEditForm, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes, Model model) {
 		if (bindingResult.hasErrors()) {
+			List<Category> categories = categoryRepository.findAll();
+			 model.addAttribute("categories", categories);
 			// 時間オプションを再生成してモデルに追加
 			List<String> options = IntStream.rangeClosed(0, 47)
 					.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())

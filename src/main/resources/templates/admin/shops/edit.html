@@ -167,7 +167,7 @@
 											<option value="">選択なし</option>
 											<div th:each="category : ${categories}">
 												<option th:value="${category.getId()}"
-													th:selected="${shopRegisterForm.categoryIds != null && i < shopRegisterForm.categoryIds.size() ? shopRegisterForm.categoryIds[i] == category.getId() : false}"
+													th:selected="${shopEditForm.categoryIds != null && i < shopEditForm.categoryIds.size() ? shopEditForm.categoryIds[i] == category.getId() : false}"
 													th:text="${category.getName()}"></option>
 											</div>
 										</select>

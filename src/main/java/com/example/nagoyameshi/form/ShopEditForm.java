@@ -1,6 +1,7 @@
 package com.example.nagoyameshi.form;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,6 +46,8 @@ public class ShopEditForm {
     
     @NotBlank(message = "電話番号を入力してください。")
     private String phoneNumber;
+    
+    private List<Integer> categoryIds;
 }
 
 

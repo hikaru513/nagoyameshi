@@ -18,8 +18,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests                
-            	.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/shops", "/shops/{id}", "/stripe/webhook", "/shops/{id}/reviews").permitAll()  // すべてのユーザーにアクセスを許可するUR
-                .requestMatchers("/admin/**").hasRole("ADMIN")  // 管理者にのみアクセスを許可するURL
+            	.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/").permitAll()  // すべてのユーザーにアクセスを許可するURL
+            	.requestMatchers("/signup/**").anonymous()                
+                .requestMatchers("/shops/{Id}/reviews/**", "/favorites/**", "/shops/{Id}/favorites/**", "/reservations/**", "/shops/{Id}/reservations/**").hasAnyRole("FREE_MEMBER", "PAID_MEMBER")                
+                .requestMatchers("/shops/**", "/company", "/terms").hasAnyRole("ANONYMOUS", "FREE_MEMBER", "PAID_MEMBER")     
+                .requestMatchers("/subscription/register", "/subscription/create").hasRole("FREE_MEMBER") 
+                .requestMatchers("/subscription/edit", "/subscription/update", "/subscription/cancel", "/subscription/delete").hasRole("PAID_MEMBER") 
+            	.requestMatchers("/admin/**").hasRole("ADMIN")  // 管理者にのみアクセスを許可するURL
                 .anyRequest().authenticated()                   // 上記以外のURLはログインが必要（会員または管理者のどちらでもOK）
             )
             .formLogin((form) -> form

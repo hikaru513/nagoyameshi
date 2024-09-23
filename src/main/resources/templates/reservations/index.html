@@ -40,7 +40,7 @@
 							<thead>
 								<tr>
 									<th scope="col">店舗名</th>
-									<th scope="col">予約日</th>
+									<th scope="col">予約日時</th>
 									<th scope="col">予約人数</th>
 									<th scope="col"></th>
 								</tr>
@@ -51,40 +51,43 @@
 										<a th:href="@{/shops/__${reservation.getShop().getId()}__}"
 											th:text="${reservation.getShop().getName()}"></a>
 									</td>
-									<td th:text="${reservation.getReservationDate()}"></td>
+									<td
+										th:text="${#temporals.format(reservation.getReservationDatetime(), 'yyyy年M月d日 H時mm分')}">
+									</td>
 									<td th:text="${reservation.getNumberOfPeople + '名'}"></td>
 									<td><a href="#" class="nagoyameshi-link-danger" data-bs-toggle="modal"
 											th:data-bs-target="${'#deleteReservationModal' + reservation.getShop().getId()}">キャンセル</a>
 									</td>
 
 									<!-- キャンセル用モーダル -->
-								<div class="modal fade"
-									th:id="${'deleteReservationModal' + reservation.getShop().getId()}"
-									tabindex="-1"
-									th:aria-labelledby="${'deleteReservationModalLabel' + reservation.getShop().getId()}">
-									<div class="modal-dialog">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h5 class="modal-title"
-													th:id="${'deleteReservationModalLabel' + reservation.getShop().getId()}"
-													th:text="${reservation.getShop().getName() + 'の予約をキャンセルしますか？'}">
-												</h5>
-												<button type="button" class="btn-close" data-bs-dismiss="modal"
-													aria-label="閉じる"></button>
-											</div>
-											<div class="modal-footer">
-												<form method="post"
-													th:action="@{/shops/__${reservation.getShop().getId()}__/delete}" name="deleteReservationForm">
-													<button type="submit"
-														class="btn nagoyameshi-btn-danger text-white shadow-sm">キャンセルする</button>
-												</form>
+									<div class="modal fade"
+										th:id="${'deleteReservationModal' + reservation.getShop().getId()}"
+										tabindex="-1"
+										th:aria-labelledby="${'deleteReservationModalLabel' + reservation.getShop().getId()}">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title"
+														th:id="${'deleteReservationModalLabel' + reservation.getShop().getId()}"
+														th:text="${reservation.getShop().getName() + 'の予約をキャンセルしますか？'}">
+													</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"
+														aria-label="閉じる"></button>
+												</div>
+												<div class="modal-footer">
+													<form method="post"
+														th:action="@{/shops/__${reservation.getShop().getId()}__/delete}"
+														name="deleteReservationForm">
+														<button type="submit"
+															class="btn nagoyameshi-btn-danger text-white shadow-sm">キャンセルする</button>
+													</form>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-							</tr>
-						</tbody>
-					</table>
+								</tr>
+							</tbody>
+						</table>
 
 						<!-- ページネーション -->
 						<div th:if="${reservationPage.getTotalPages() > 1}" class="d-flex justify-content-center">

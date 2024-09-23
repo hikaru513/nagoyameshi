@@ -1,6 +1,9 @@
 package com.example.nagoyameshi.controller;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,9 +95,9 @@ public class ShopController {
 				shopPage = shopRepository.findAllByOrderByCreatedAtDesc(pageable);
 			}
 		}
-		
+
 		List<Category> categories = categoryRepository.findAll();
-		
+
 		model.addAttribute("shopPage", shopPage);
 		model.addAttribute("categories", categories);
 		model.addAttribute("keyword", keyword);
@@ -107,38 +110,47 @@ public class ShopController {
 	}
 
 	@GetMapping("/{id}")
-    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-    	Favorite favorite = null;
-  	  boolean isFavorite =false;
-  	  
-        Shop shop = shopRepository.getReferenceById(id);
-        boolean userPosted = false;
-        
-        if(userDetailsImpl != null) {
-  		  User user = userDetailsImpl.getUser();
-  		  userPosted = reviewService.reviewJudge(shop, user);
-  		  isFavorite = favoriteService.favoriteJudge(shop, user);
-  		  if(isFavorite) {
-  			  favorite = favoriteRepository.findByShopAndUser(shop, user);
-  		}
-  	  }
-        List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
-        
-        List<Review> reviewList = reviewRepository.findTop6ByShopOrderByCreatedAtDesc(shop);
-  	  	long reviewCount = reviewRepository.countByShop(shop);
-  	  	
-        model.addAttribute("categoryShopRelation", categoryShopRelation);
-        model.addAttribute("reservationInputForm", new ReservationInputForm());
-  	  	model.addAttribute("userPosted", userPosted);
-  	  	model.addAttribute("reviewList", reviewList);
-  	  	model.addAttribute("reviewCount", reviewCount);
-  	  	model.addAttribute("favorite", favorite);
-  	  	model.addAttribute("isFavorite", isFavorite);
-  	  
-        model.addAttribute("shop", shop);
-        
-        model.addAttribute("reservationInputForm", new ReservationInputForm());
-        
-        return "shops/show";
-    }  
+	public String show(@PathVariable(name = "id") Integer id, Model model,
+			@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+		Favorite favorite = null;
+		boolean isFavorite = false;
+
+		Shop shop = shopRepository.getReferenceById(id);
+		boolean userPosted = false;
+
+		if (userDetailsImpl != null) {
+			User user = userDetailsImpl.getUser();
+			userPosted = reviewService.reviewJudge(shop, user);
+			isFavorite = favoriteService.favoriteJudge(shop, user);
+			if (isFavorite) {
+				favorite = favoriteRepository.findByShopAndUser(shop, user);
+			}
+		}
+		
+		// 時間オプションを再生成してモデルに追加
+				List<String> options = IntStream.rangeClosed(0, 47)
+						.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+						.collect(Collectors.toList());
+
+				model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する 
+				
+		List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
+
+		List<Review> reviewList = reviewRepository.findTop6ByShopOrderByCreatedAtDesc(shop);
+		long reviewCount = reviewRepository.countByShop(shop);
+
+		model.addAttribute("categoryShopRelation", categoryShopRelation);
+		model.addAttribute("reservationRegisterForm", new ReservationInputForm());
+		model.addAttribute("userPosted", userPosted);
+		model.addAttribute("reviewList", reviewList);
+		model.addAttribute("reviewCount", reviewCount);
+		model.addAttribute("favorite", favorite);
+		model.addAttribute("isFavorite", isFavorite);
+
+		model.addAttribute("shop", shop);
+
+		model.addAttribute("reservationInputForm", new ReservationInputForm());
+
+		return "shops/show";
+	}
 }

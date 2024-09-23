@@ -1,5 +1,12 @@
 package com.example.nagoyameshi.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +61,33 @@ public class UserService {
         
         userRepository.save(user);
     }    
+    
+    @Transactional
+    public void createStripeCustomerId(User user, String stripeId) {
+        user.setStripeCustomerId(stripeId);        
+        userRepository.save(user);
+    }
+    
+    @Transactional
+    public void updateRole(User user, String roleName) {
+        Role role = roleRepository.findByName(roleName);
+        user.setRole(role);
+        userRepository.save(user);
+    } 
+    
+    // 認証情報のロールを更新する
+    public void refreshAuthenticationByRole(String newRole) {
+        // 現在の認証情報を取得する
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 新しい認証情報を作成する
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(newRole));
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), authorities);
+
+        // 認証情報を更新する
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+    }
      
   // メールアドレスが登録済みかどうかをチェックする
      public boolean isEmailRegistered(String email) {

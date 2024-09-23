@@ -9,21 +9,20 @@ import com.example.nagoyameshi.repository.ReservationRepository;
 
 @Service
 public class ReservationService {
-private final ReservationRepository reservationRepository;    
-    
-    public ReservationService(ReservationRepository reservationRepository) {
-        this.reservationRepository = reservationRepository;        
-    }    
-    
-    @Transactional
-    public void create(ReservationRegisterForm ReservationRegisterForm) {
-    	Reservation reservation = new Reservation();        
-        
-    	
-    	reservation.setNumberOfPeople(ReservationRegisterForm.getNumberOfPeople());
-        
-                    
-        reservationRepository.save(reservation);
-       
-    } 
+	private final ReservationRepository reservationRepository;
+
+	public ReservationService(ReservationRepository reservationRepository) {
+		this.reservationRepository = reservationRepository;
+	}
+
+	@Transactional
+	public void create(ReservationRegisterForm ReservationRegisterForm) {
+		Reservation reservation = new Reservation();
+
+		reservation.setReservationTime(ReservationRegisterForm.getReservationTime());
+		reservation.setNumberOfPeople(ReservationRegisterForm.getNumberOfPeople());
+
+		reservationRepository.save(reservation);
+
+	}
 }

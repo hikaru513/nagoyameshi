@@ -1,8 +1,11 @@
 package com.example.nagoyameshi.controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,34 +38,45 @@ public class ReservationController {
 	private final ReservationRepository reservationRepository;
 	private final ShopRepository shopRepository;
 	private final CategoryShopRelationRepository categoryShopRelationRepository;
-	
-    
-    public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository, CategoryShopRelationRepository categoryShopRelationRepository) {          
-        this.reservationRepository = reservationRepository;
-        this.shopRepository = shopRepository;
-        this.categoryShopRelationRepository = categoryShopRelationRepository;
-    }    
 
-    @GetMapping("/reservations")
-    public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, Model model) {
-        User user = userDetailsImpl.getUser();
-        Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
-        
-        model.addAttribute("reservationPage", reservationPage);         
-        
-        return "reservations/index";
-    }
-    @GetMapping("/shops/{id}/reservations/input")
+	public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository,
+			CategoryShopRelationRepository categoryShopRelationRepository) {
+		this.reservationRepository = reservationRepository;
+		this.shopRepository = shopRepository;
+		this.categoryShopRelationRepository = categoryShopRelationRepository;
+	}
+
+	@GetMapping("/reservations")
+	public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+			Model model) {
+		User user = userDetailsImpl.getUser();
+		Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+
+		model.addAttribute("reservationPage", reservationPage);
+
+		return "reservations/index";
+	}
+	@GetMapping("/shops/{id}/reservations/input")
     public String input(@PathVariable(name = "id") Integer id,
                         @ModelAttribute @Validated ReservationInputForm reservationInputForm,
                         BindingResult bindingResult,
                         RedirectAttributes redirectAttributes,
                         Model model)
     {   
-        Shop shop = shopRepository.getReferenceById(id);   
+		
+		// 時間オプションを再生成してモデルに追加
+		List<String> options = IntStream.rangeClosed(0, 47)
+				.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
+				.collect(Collectors.toList());
+
+		model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する 
+		
+		
+        Shop shop = shopRepository.getReferenceById(id);  
         List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
         
-        if (bindingResult.hasErrors()) {            
+        if (bindingResult.hasErrors()) {       
             model.addAttribute("shop", shop);            
             model.addAttribute("categoryShopRelation", categoryShopRelation);
             model.addAttribute("errorMessage", "予約内容に不備があります。"); 
@@ -74,38 +88,42 @@ public class ReservationController {
         return "redirect:/shops/{id}/reservations/confirm";
     }    
     
-    @GetMapping("/shops/{id}/reservations/confirm")
-    public String confirm(
-        @PathVariable(name = "id") Integer id,
-        @ModelAttribute ReservationInputForm reservationInputForm,
-        @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,                          
-        Model model) 
-    {
-        Shop shop = shopRepository.getReferenceById(id);
-        User user = userDetailsImpl.getUser(); 
-        
-        // 予約日を取得する
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate reservationDate = LocalDate.parse(reservationInputForm.getReservationDate(), formatter);
 
-        // 予約人数を計算する
-        Integer numberOfPeople = reservationInputForm.getNumberOfPeople();      
-        
-        ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(
-            shop.getId(), user.getId(), reservationDate.toString(), reservationInputForm.getNumberOfPeople()
-        );
-        
-        model.addAttribute("shop", shop);  
-        model.addAttribute("reservationRegisterForm", reservationRegisterForm);       
-        
-        return "reservations/confirm";
-    }   
-    @PostMapping("/shops/{id}/delete")
-    public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
-        reservationRepository.deleteById(id);
+	@GetMapping("/shops/{id}/reservations/confirm")
+	public String confirm(
+			@PathVariable(name = "id") Integer id,
+			@ModelAttribute ReservationInputForm reservationInputForm,
+			@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+			Model model) {
+		Shop shop = shopRepository.getReferenceById(id);
+		User user = userDetailsImpl.getUser();
 
-        redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
+		// 予約日を取得する
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate reservationDate = LocalDate.parse(reservationInputForm.getReservationDate(), formatter);
 
-        return "redirect:/reservations";
-    }  
+		// 予約時間を取得する 
+		LocalTime reservationTime = reservationInputForm.getReservationTime();
+
+		// 予約人数を計算する
+		Integer numberOfPeople = reservationInputForm.getNumberOfPeople();
+
+		ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(
+				shop.getId(), user.getId(), reservationDate.toString(), reservationInputForm.getReservationTime(),
+				reservationInputForm.getNumberOfPeople());
+
+		model.addAttribute("shop", shop);
+		model.addAttribute("reservationRegisterForm", reservationRegisterForm);
+
+		return "reservations/confirm";
+	}
+
+	@PostMapping("/shops/{id}/delete")
+	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+		reservationRepository.deleteById(id);
+
+		redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
+
+		return "redirect:/reservations";
+	}
 }
