@@ -3,6 +3,7 @@ package com.example.nagoyameshi.controller;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,17 +34,21 @@ import com.example.nagoyameshi.repository.CategoryShopRelationRepository;
 import com.example.nagoyameshi.repository.ReservationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.security.UserDetailsImpl;
+import com.example.nagoyameshi.service.ReservationService;
+
 
 @Controller
 public class ReservationController {
 	private final ReservationRepository reservationRepository;
 	private final ShopRepository shopRepository;
+	private final ReservationService reservationService; 
 	private final CategoryShopRelationRepository categoryShopRelationRepository;
 
-	public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository,
+	public ReservationController(ReservationRepository reservationRepository, ShopRepository shopRepository, ReservationService reservationService,
 			CategoryShopRelationRepository categoryShopRelationRepository) {
 		this.reservationRepository = reservationRepository;
 		this.shopRepository = shopRepository;
+		this.reservationService = reservationService;
 		this.categoryShopRelationRepository = categoryShopRelationRepository;
 	}
 
@@ -53,41 +59,47 @@ public class ReservationController {
 		User user = userDetailsImpl.getUser();
 		Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
 
-		model.addAttribute("reservationPage", reservationPage);
+		LocalDate currentDate = LocalDate.now();
+	    model.addAttribute("currentDate", currentDate);
+	    model.addAttribute("reservationPage", reservationPage);
 
 		return "reservations/index";
 	}
+
 	@GetMapping("/shops/{id}/reservations/input")
-    public String input(@PathVariable(name = "id") Integer id,
-                        @ModelAttribute @Validated ReservationInputForm reservationInputForm,
-                        BindingResult bindingResult,
-                        RedirectAttributes redirectAttributes,
-                        Model model)
-    {   
-		
+	public String input(@PathVariable(name = "id") Integer id,
+			@ModelAttribute @Validated ReservationInputForm reservationInputForm,
+			BindingResult bindingResult,
+			RedirectAttributes redirectAttributes,
+			Model model) {
+
 		// 時間オプションを再生成してモデルに追加
-		List<String> options = IntStream.rangeClosed(0, 47)
+		List<String> options = new ArrayList<>();
+		options.add("選択してください");
+		options.addAll(IntStream.rangeClosed(0, 47)
 				.mapToObj(i -> LocalTime.of(0, 0).plusMinutes(30 * i).toString())
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
 
 		model.addAttribute("timeOptions", options); // Modelに時間オプションを追加する 
+
+		Shop shop = shopRepository.getReferenceById(id);
+		Integer numberOfPeople = reservationInputForm.getNumberOfPeople();
 		
+		  
+		List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
+
 		
-        Shop shop = shopRepository.getReferenceById(id);  
-        List<CategoryShopRelation> categoryShopRelation = categoryShopRelationRepository.findByShopOrderByIdAsc(shop);
-        
-        if (bindingResult.hasErrors()) {       
-            model.addAttribute("shop", shop);            
-            model.addAttribute("categoryShopRelation", categoryShopRelation);
-            model.addAttribute("errorMessage", "予約内容に不備があります。"); 
-            return "shops/show";
-        }
-        
-        redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);           
-        
-        return "redirect:/shops/{id}/reservations/confirm";
-    }    
-    
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("shop", shop);
+			model.addAttribute("categoryShopRelation", categoryShopRelation);
+			model.addAttribute("errorMessage", "予約内容に不備があります。");
+			return "shops/show";
+		}
+
+		redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);
+
+		return "redirect:/shops/{id}/reservations/confirm";
+	}
 
 	@GetMapping("/shops/{id}/reservations/confirm")
 	public String confirm(
@@ -118,12 +130,16 @@ public class ReservationController {
 		return "reservations/confirm";
 	}
 
-	@PostMapping("/shops/{id}/delete")
-	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
-		reservationRepository.deleteById(id);
+	@PostMapping("/shops/{id}/reservations/create")
+	public String create(@ModelAttribute ReservationRegisterForm reservationRegisterForm) {
+		reservationService.create(reservationRegisterForm);
+		return "redirect:/reservations?reserved";
+	}
 
-		redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
-
-		return "redirect:/reservations";
+	@PostMapping("/reservations/{reservationId}/delete")
+	public String delete(@PathVariable(name = "reservationId") Integer reservationId, RedirectAttributes redirectAttributes) {
+	    reservationRepository.deleteById(reservationId);
+	    redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
+	    return "redirect:/reservations";
 	}
 }

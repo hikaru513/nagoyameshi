@@ -61,11 +61,16 @@ public class SubscriptionController {
     @GetMapping("/edit")
     public String edit(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {      
         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId()); 
-        PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(user.getStripeCustomerId());        
-        
+        PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(user.getStripeCustomerId());
+
+        if (paymentMethod == null || paymentMethod.getCard() == null) {
+            model.addAttribute("error", "支払い方法が見つかりません");
+            return "subscription/edit";
+        }
+
         model.addAttribute("card", paymentMethod.getCard());
         model.addAttribute("cardHolderName", paymentMethod.getBillingDetails().getName());
-        
+
         return "subscription/edit";
     }
     

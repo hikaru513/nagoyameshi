@@ -140,7 +140,6 @@ public class ShopController {
 		long reviewCount = reviewRepository.countByShop(shop);
 
 		model.addAttribute("categoryShopRelation", categoryShopRelation);
-		model.addAttribute("reservationRegisterForm", new ReservationInputForm());
 		model.addAttribute("userPosted", userPosted);
 		model.addAttribute("reviewList", reviewList);
 		model.addAttribute("reviewCount", reviewCount);

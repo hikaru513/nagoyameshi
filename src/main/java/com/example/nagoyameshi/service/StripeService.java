@@ -22,7 +22,7 @@ import com.stripe.param.SubscriptionListParams;
 
 @Service
 public class StripeService {
-    @Value("${stripe.api-key}")
+    @Value("sk_test_51P2seUP37jUfZlT3tdn6MjSZhIddEYcdvuUeXHFDS7OiHvnywjdKoNwpkCy4ZPQ9kZI2f8NIl9b5d3LrfdQUw8NX002k1mPDv8")
     private String stripeApiKey;
     
     public Customer createCustomer(String name, String email, String paymentMethodId) {
