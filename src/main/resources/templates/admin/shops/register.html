@@ -74,6 +74,7 @@
 									<div th:if="${#fields.hasErrors('openingTime')}" class="text-danger small mb-2"
 										th:errors="*{openingTime}"></div>
 									<select class="form-control" th:field="*{openingTime}">
+										<option value="" disabled selected>選択してください</option>
 										<option th:each="time : ${timeOptions}" th:value="${time}" th:text="${time}">
 										</option>
 									</select>
@@ -88,6 +89,7 @@
 									<div th:if="${#fields.hasErrors('closingTime')}" class="text-danger small mb-2"
 										th:errors="*{closingTime}"></div>
 									<select class="form-control" th:field="*{closingTime}">
+										<option value="" disabled selected>選択してください</option>
 										<option th:each="time : ${timeOptions}" th:value="${time}" th:text="${time}">
 										</option>
 									</select>
@@ -149,7 +151,7 @@
 									<input type="text" class="form-control" th:field="*{phoneNumber}">
 								</div>
 							</div>
-							
+
 							<th:block th:each="i : ${#numbers.sequence(0, 2)}">
 								<div class="form-group row mb-3">
 									<label th:for="${'category' + (i + 1)}"
