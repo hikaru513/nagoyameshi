@@ -17,6 +17,7 @@ import com.example.nagoyameshi.form.SignupForm;
 import com.example.nagoyameshi.form.UserEditForm;
 import com.example.nagoyameshi.repository.RoleRepository;
 import com.example.nagoyameshi.repository.UserRepository;
+import com.example.nagoyameshi.security.UserDetailsImpl;
 
 @Service
 public class UserService {
@@ -111,4 +112,19 @@ public class UserService {
          User currentUser = userRepository.getReferenceById(userEditForm.getId());
          return !userEditForm.getEmail().equals(currentUser.getEmail());      
      }  
+     
+
+//	アップデートしたロールIDの認証
+	public void refreshAuthenticationByRole(String roleName, UserService userService) {
+	    // Spring Securityの認証情報を取得
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    // ユーザーのロールを更新した後、認証情報を再構築する
+	    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+	    userService.updateRole(userDetails.getUser(), roleName);
+	    
+	    // 認証情報を再構築してセキュリティコンテキストに設定
+	    Authentication newAuthentication = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+	    SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+	}  
 }

@@ -63,6 +63,7 @@ public class ShopService {
 	public void update(ShopEditForm shopEditForm) {
 		Shop shop = shopRepository.getReferenceById(shopEditForm.getId());
 		MultipartFile imageFile = shopEditForm.getImageFile();
+		List<Integer> categoryIds = shopEditForm.getCategoryIds();
 
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
@@ -83,6 +84,7 @@ public class ShopService {
 		shop.setPhoneNumber(shopEditForm.getPhoneNumber());
 
 		shopRepository.save(shop);
+		categoryShopRelationService.update(categoryIds, shop);
 	}
 
 	// UUIDを使って生成したファイル名を返す

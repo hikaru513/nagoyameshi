@@ -74,6 +74,10 @@ public class StripeService {
     }
     
     public PaymentMethod getDefaultPaymentMethod(String customerId) {
+    	Stripe.apiKey = stripeApiKey;
+    	if (customerId == null || customerId.isEmpty()) {
+            throw new IllegalArgumentException("Customer ID must not be null or empty");
+        }
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("customer", customerId);
@@ -120,6 +124,7 @@ public class StripeService {
     }
     
     public Subscription getSubscription(String customerId) {
+    	Stripe.apiKey = stripeApiKey;
         try {
             SubscriptionListParams params = SubscriptionListParams.builder()
                 .setCustomer(customerId)
@@ -128,6 +133,7 @@ public class StripeService {
             List<Subscription> subscriptions = Subscription.list(params).getData();
 
             for (Subscription subscription : subscriptions) {
+                System.out.println("Subscription ID: " + subscription.getId() + ", Status: " + subscription.getStatus());
                 if ("active".equals(subscription.getStatus())) {
                     return subscription;
                 }

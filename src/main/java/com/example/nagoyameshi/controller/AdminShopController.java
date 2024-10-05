@@ -104,6 +104,10 @@ public class AdminShopController {
 			RedirectAttributes redirectAttributes,
 			Model model) {
 		if (bindingResult.hasErrors()) {
+			
+			List<Category> categories = categoryRepository.findAll();
+
+			model.addAttribute("categories", categories);
 
 			// 時間オプションを再生成してモデルに追加
 			List<String> options = IntStream.rangeClosed(0, 47)

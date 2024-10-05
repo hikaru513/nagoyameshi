@@ -61,6 +61,12 @@ public class SubscriptionController {
     @GetMapping("/edit")
     public String edit(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {      
         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId()); 
+     // 顧客IDのログ出力
+        String customerId = user.getStripeCustomerId();
+        if (customerId == null || customerId.isEmpty()) {
+            model.addAttribute("error", "顧客IDが不正です");
+            return "subscription/edit";
+        }
         PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(user.getStripeCustomerId());
 
         if (paymentMethod == null || paymentMethod.getCard() == null) {
