@@ -23,13 +23,7 @@
      <body>
          <div class="nagoyameshi-wrapper">
              <!-- ヘッダー -->
-             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm nagoyameshi-navbar">
-                 <div class="container nagoyameshi-container">
-                     <a class="navbar-brand" th:href="@{/}">                        
-                         <img class="nagoyameshi-logo me-1" th:src="@{/images/logo.png}" alt="NAGOYAMESHI">                        
-                     </a>                                                                    
-                 </div>
-             </nav>
+             <div th:replace="~{fragment :: header}"></div>
              
              <main>
                  <div class="container pt-4 pb-5 nagoyameshi-container">

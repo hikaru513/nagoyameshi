@@ -129,8 +129,9 @@ public class StripeService {
             SubscriptionListParams params = SubscriptionListParams.builder()
                 .setCustomer(customerId)
                 .build();
-
-            List<Subscription> subscriptions = Subscription.list(params).getData();
+            var collection = Subscription.list(params);
+            System.out.println(collection.toJson());
+            List<Subscription> subscriptions = collection.getData();
 
             for (Subscription subscription : subscriptions) {
                 System.out.println("Subscription ID: " + subscription.getId() + ", Status: " + subscription.getStatus());

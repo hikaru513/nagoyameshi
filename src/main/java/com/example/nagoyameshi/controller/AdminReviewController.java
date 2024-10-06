@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.nagoyameshi.entity.Review;
@@ -35,13 +36,20 @@ public class AdminReviewController {
      }	
      
      @GetMapping
-     public String index(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
-    	 Page<Review> reviewPage = reviewRepository.findAll(pageable);      
+     public String index(@RequestParam(value = "keyword", required = false) String keyword, Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+         Page<Review> reviewPage;
          
-    	model.addAttribute("reviewPage", reviewPage);             
-         
+         if (keyword != null && !keyword.isEmpty()) {
+             reviewPage = reviewRepository.findByShopNameOrUserNameOrUserEmailContaining(keyword, pageable);
+         } else {
+             reviewPage = reviewRepository.findAll(pageable);
+         }
+
+         model.addAttribute("reviewPage", reviewPage);
+         model.addAttribute("keyword", keyword); // ビューに検索キーワードを渡す            
+      
          return "admin/reviews/index";
-     } 
+     }
      
      @GetMapping("/{id}")
      public String show(@PathVariable(name = "id") Integer id, Model model) {
