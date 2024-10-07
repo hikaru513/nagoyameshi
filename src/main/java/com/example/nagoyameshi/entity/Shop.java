@@ -72,5 +72,6 @@ public class Shop {
                                       .collect(Collectors.toList());
         }
         return new ArrayList<>();
-    }    
+    } 
+	
 }
